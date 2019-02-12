@@ -9,11 +9,10 @@ included with the distribution for more details.
 
 """
 import os, sys, peakachu, glob
-from distutils.core import setup
+import setuptools
 
-if ((sys.version_info.major==2) and (sys.version_info.minor!=7)) or \
-   ((sys.version_info.major==3) and (sys.version_info.minor<6)):
-    print('PYTHON 2.7/3.5+ IS REQUIRED. YOU ARE CURRENTLY USING PYTHON {}'.format(sys.version.split()[0]))
+if (sys.version_info.major!=3) or (sys.version_info.minor<6):
+    print('PYTHON 3.5+ IS REQUIRED. YOU ARE CURRENTLY USING PYTHON {}'.format(sys.version.split()[0]))
     sys.exit(2)
 
 # Guarantee Unix Format
@@ -21,16 +20,15 @@ for src in glob.glob('scripts/*'):
     text = open(src, 'r').read().replace('\r\n', '\n')
     open(src, 'w').write(text)
 
-setup(
+setuptools.setup(
     name = 'peakachu',
     version = peakachu.__version__,
     author = peakachu.__author__,
     author_email = 'tariksalameh@gmail.com',
     url = 'https://github.com/tariks/peakachu/',
     description = 'Identify DNA loops from Hi-C data.',
-    keywords = 'Hi-C interaction contact loop peak',
-    package_dir = {'peakachu':'peakachu'},
-    packages = ['peakachu'],
+    keywords = 'Hi-C interaction contact loop peak cooler',
+    packages = setuptools.find_packages(),
     scripts = glob.glob('scripts/*'),
     long_description = 'test description',
     classifiers = [
