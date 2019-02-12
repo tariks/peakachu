@@ -4,11 +4,11 @@ import gc
 import pathlib
 import random
 
-
 def main(args):
     import numpy as np
     np.seterr(divide='ignore',invalid='ignore')
     from peakachu import trainUtils
+    from scipy.sparse import csr_matrix
     import cooler
     Lib = cooler.Cooler(args.path)
     #resolution = Lib.binsize
@@ -32,22 +32,25 @@ def main(args):
             print(key,Key)
             if Key!=key:
                 gc.collect()
-                X = Lib.matrix(balance=True,sparse=False).fetch(Key)
+                X = Lib.matrix(balance=True,sparse=True).fetch(Key).tocsr() # lower down the memory usage
                 R,C = X.nonzero()
+                validmask = np.isfinite(X.data) # non-nan
+                R,C,data = R[validmask],C[validmask],X.data[validmask]
+                X = csr_matrix((data, (R, C)), shape=X.shape)
+                del data
                 idx = (C-R > 2) & (C-R < 80)
                 R,C = R[idx],C[idx]
                 idx = np.arange(R.size)
                 idx = np.random.choice(idx,100000)
                 R,C = R[idx],C[idx]
-                np.nan_to_num(X,copy=False)
+                #np.nan_to_num(X,copy=False)
                 #clist = coords['chr'+Key]
                 clist = coords[chromnams[K]]
                 try:
                     chroms.append(np.vstack((f for f in trainUtils.buildmatrix(
                                              X,coords[chromnams[K]],width=args.width,
                                              chrm=Key,res=resolution,positive=True))))
-                    rsize = R.size
-                    neg_coords = [(R[j],C[j]) for j in range(rsize)]
+                    neg_coords = [(r,c) for r,c in zip(R,C)]
                     stop = int(chroms[-1].shape[0] * 1.2)
                     fakechroms.append(np.vstack((f for f in trainUtils.buildmatrix(
                                  X,neg_coords,width=args.width,

@@ -45,8 +45,9 @@ def buildmatrix(Matrix, coords,width=10,lower=1,L=False,chrm='chr1',res=10000,po
             pass
         else:
             try:
-                window = Matrix[x-width:x+width+1,
-                                y-width:y+width+1]
+                # compatible with both numpy.ndarray and CSR/CSC sparse matrix
+                window = np.array(Matrix[x-width:x+width+1,
+                                         y-width:y+width+1])
                 if np.count_nonzero(window) < window.size*.1:
                     pass
                 else:
