@@ -44,7 +44,8 @@ def getargs():
    
     ## Parse the command-line arguments
     commands = sys.argv[1:]
-    if not commands:
+    if ((not commands) or ((commands[0] in ['train', 'score_chromosome', 'score_genome', 'depth', 'pool'])
+        and len(commands) == 1)):
         commands.append('-h')
     args = parser.parse_args(commands)
 
