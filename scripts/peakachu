@@ -14,7 +14,7 @@ def getargs():
             help='''Calculate interaction probability per pixel for a chromosome''')
     subchrom.set_defaults(func=score_chromosome.main)
     subgen = subparsers.add_parser('score_genome',
-            help='''Calculate interaction probability per pixel for a chromosome''')
+            help='''Calculate interaction probability per pixel for the whole genome''')
     subgen.set_defaults(func=score_genome.main)
     subdepth=subparsers.add_parser('depth',
             help='''Print read count of a .cool file''')
