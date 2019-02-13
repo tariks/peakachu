@@ -2,7 +2,6 @@
 import pickle
 import gc
 import pathlib
-import random
 
 def main(args):
     import numpy as np
@@ -10,6 +9,7 @@ def main(args):
     from peakachu import trainUtils
     from scipy.sparse import csr_matrix
     import cooler
+    import random
     Lib = cooler.Cooler(args.path)
     #resolution = Lib.binsize
     resolution = 10000
@@ -30,9 +30,6 @@ def main(args):
         del data
         idx = (C-R > 2) & (C-R < 80)
         R,C = R[idx],C[idx]
-        idx = np.arange(R.size)
-        idx = np.random.choice(idx,100000)
-        R,C = R[idx],C[idx]
         clist = coords[chromname]
         try:
             positive_class[chromname] = np.vstack((f for f in trainUtils.buildmatrix(
@@ -47,6 +44,7 @@ def main(args):
 
         except:
             print('{} failed with {} coords'.format(key,len(clist)))
+            print(chromname,key)
     for key in Lib.chromnames[:]:
         if key.startswith('chr'):
             chromname=key

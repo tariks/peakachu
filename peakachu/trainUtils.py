@@ -6,17 +6,12 @@
 import numpy as np
 from random import randint
 from sklearn.ensemble import RandomForestClassifier as forest
-from sklearn.linear_model import SGDClassifier
-from sklearn.linear_model import LogisticRegressionCV as LRCV
-from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import PredefinedSplit
-from sklearn.calibration import CalibratedClassifierCV as calib
 from sklearn import metrics
 from collections import defaultdict
 from scipy import stats
 import gc
 
-def buildmatrix(Matrix, coords,width=10,lower=1,L=False,chrm='chr1',res=10000,positive=True,stop=2000):
+def buildmatrix(Matrix, coords,width=10,lower=1,L=False,chrm='chr1',res=10000,positive=True,stop=5000):
     """
     Generate training set
     :param Matrix: single chromosome dense array
