@@ -31,20 +31,17 @@ def main(args):
         idx = (C-R > 2) & (C-R < 80)
         R,C = R[idx],C[idx]
         clist = coords[chromname]
-        try:
-            positive_class[chromname] = np.vstack((f for f in trainUtils.buildmatrix(
+        positive_class[chromname] = np.vstack((f for f in trainUtils.buildmatrix(
                                              X,coords[chromname],width=args.width,
                                              chrm=chromname,res=resolution,positive=True)))
-            neg_coords = [(r,c) for r,c in zip(R,C)]
-            stop = int(chroms[-1].shape[0] * 1.2)
-            negative_class[chromname]=np.vstack((f for f in trainUtils.buildmatrix(
-                                 X,neg_coords,width=args.width,
-                                 chrm=chromname,
-                                 res=resolution,positive=False,stop=stop)))
+        neg_coords = [(r,c) for r,c in zip(R,C)]
+        random.shuffle(neg_coords)
+        stop = len(clist)
+        negative_class[chromname]=np.vstack((f for f in trainUtils.buildmatrix(
+                             X,neg_coords,width=args.width,
+                             chrm=chromname,
+                             res=resolution,positive=False,stop=stop)))
 
-        except:
-            print('{} failed with {} coords'.format(key,len(clist)))
-            print(chromname,key)
     for key in Lib.chromnames[:]:
         if key.startswith('chr'):
             chromname=key
