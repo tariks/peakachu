@@ -22,7 +22,7 @@ def main(args):
             chromname=key
         else:
             chromname='chr'+key
-        X = Lib.matrix(balance=True,sparse=True).fetch(Key).tocsr() # lower down the memory usage
+        X = Lib.matrix(balance=True,sparse=True).fetch(key).tocsr() # lower down the memory usage
         R,C = X.nonzero()
         validmask = np.isfinite(X.data) # non-nan
         R,C,data = R[validmask],C[validmask],X.data[validmask]
@@ -46,7 +46,7 @@ def main(args):
                                  res=resolution,positive=False,stop=stop)))
 
         except:
-            print('{} failed with {} coords'.format(Key,len(clist)))
+            print('{} failed with {} coords'.format(key,len(clist)))
     for key in Lib.chromnames[:]:
         if key.startswith('chr'):
             chromname=key
