@@ -6,6 +6,7 @@
 import numpy as np
 from random import randint
 from sklearn.ensemble import RandomForestClassifier as forest
+from sklearn.model_selection import GridSearchCV
 from sklearn import metrics
 from collections import defaultdict
 from scipy import stats
