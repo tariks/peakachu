@@ -8,14 +8,14 @@ from scipy import stats
 
 class Chromosome():
     def __init__(self,coomatrix,model,lower=1,upper=500,cname='chrm',res=10000,L=False,nproc=1,width=5):
-        cLen = coomatrix.shape[0]
-        self.M = sparse.diags([coomatrix.diagonal(i) for i in range(1,500)],np.arange(1,500),format='csr')
-        self.lower = lower
-        self.upper = upper
+        # cLen = coomatrix.shape[0] # seems useless
+        R,C = coomatrix.nonzero()
+        validmask = np.isfinite(coomatrix.data) & (C-R+1 > lower) & (C-R < upper)
+        R,C,data = R[validmask],C[validmask],coomatrix.data[validmask]
+        self.M = sparse.csr_matrix((data, (R, C)), shape=coomatrix.shape)
+        self.ridx, self.cidx = R, C
         self.chromname = cname
         self.r = res
-        self.M = self.M.toarray()
-        self.M = np.nan_to_num(self.M)
         self.L = L
         self.nproc = nproc
         self.w=width
@@ -48,7 +48,7 @@ class Chromosome():
             x,y = c[0],c[1]
             distance = abs(y-x)
             window = self.M[x-width:x+width+1,
-                        y-width:y+width+1]
+                        y-width:y+width+1].toarray()
             if np.count_nonzero(window) < window.size*.1:
                 pass
             else:
@@ -85,23 +85,17 @@ class Chromosome():
         wsize = self.w
         model=self.model
         print('scoring matrix {}'.format(self.chromname))
-        screen = self.M - np.triu(self.M,self.upper)
-        r,c = screen.nonzero()
-        maxd = int(np.max(c-r))
-        del screen
-        result = np.zeros(self.M.shape)
-        print('num candidates {}'.format(r.size))
-        coords = [(r[i],c[i]) for i in range(r.size)]
+        print('num candidates {}'.format(self.M.data.size))
+        coords = [(r, c) for r, c in zip(self.ridx, self.cidx)]
         p,clist = self.getwindow(coords)
-        ri = [c[0] for c in clist]
-        ci = [c[1] for c in clist]
-        result[ri,ci]+=p
-        del p
-        del clist
-        gc.collect()
-        result[result < .3] = 0
-        self.M[result==0]=0
-        return result,self.M
+        clist = np.r_[clist]
+        pfilter = p >= 0.3
+        ri = clist[:,0][pfilter]
+        ci = clist[:,1][pfilter]
+        result = sparse.csr_matrix((p[pfilter], (ri, ci)), shape=self.M.shape)
+        data = np.array(self.M[ri, ci]).ravel()
+        self.M = sparse.csr_matrix((data, (ri, ci)), shape=self.M.shape)
+        return result, self.M
 
 
     def writeBed(self,out,result,R):

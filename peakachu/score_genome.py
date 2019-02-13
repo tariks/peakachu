@@ -22,7 +22,7 @@ def main(args):
     with open(mod,'rb') as o:
         model = pickle.load(o)
     for cname in Lib.chromnames:
-        X = scoreUtils.Chromosome(Lib.matrix(balance=True, sparse=False).fetch(cname),
+        X = scoreUtils.Chromosome(Lib.matrix(balance=True, sparse=True).fetch(cname).tocsr(),
                                 model=model,
                                 cname='chr'+cname,lower=args.lower,
                                 upper=args.upper,res=resolution,

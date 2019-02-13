@@ -26,7 +26,7 @@ def main(args):
     resolution = 10000
     chroms = []
 
-    X = scoreUtils.Chromosome(Lib.matrix(balance=True, sparse=False).fetch(ccname),
+    X = scoreUtils.Chromosome(Lib.matrix(balance=True, sparse=True).fetch(ccname).tocsr(),
                                 model=model,
                                 cname=cikada,lower=args.lower,
                                 upper=args.upper,res=resolution,
