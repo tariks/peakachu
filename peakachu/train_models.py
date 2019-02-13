@@ -43,10 +43,10 @@ def main(args):
             negative_class[chromname]=np.vstack((f for f in trainUtils.buildmatrix(
                                  X,neg_coords,width=args.width,
                                  chrm=chromname,
-                                 res=resolution,positive=False,stop=stop))))
+                                 res=resolution,positive=False,stop=stop)))
 
-            except:
-                print('{} failed with {} coords'.format(Key,len(clist)))
+        except:
+            print('{} failed with {} coords'.format(Key,len(clist)))
     for key in Lib.chromnames[:]:
         if key.startswith('chr'):
             chromname=key
