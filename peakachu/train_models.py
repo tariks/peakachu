@@ -14,61 +14,51 @@ def main(args):
     #resolution = Lib.binsize
     resolution = 10000
     coords = trainUtils.parsebed(args.bedpe,lower=2,res=resolution)
-    chroms = []
     # train model per chromosome
-    chromnams=[]
-    khromnams=[]
-    for k in Lib.chromnames[:]:
-        if 'M' not in k and 'Y' not in k:
-            khromnams.append(k)
-            if k.startswith('c'):
-                chromnams.append(k)
-            else:
-                chromnams.append('chr'+k)
-    for k,key in enumerate(khromnams):
-        fakechroms=[]
-        print('training model for chr{}'.format(key))
-        for K,Key in enumerate(khromnams):
-            print(key,Key)
-            if Key!=key:
-                gc.collect()
-                X = Lib.matrix(balance=True,sparse=True).fetch(Key).tocsr() # lower down the memory usage
-                R,C = X.nonzero()
-                validmask = np.isfinite(X.data) # non-nan
-                R,C,data = R[validmask],C[validmask],X.data[validmask]
-                X = csr_matrix((data, (R, C)), shape=X.shape)
-                del data
-                idx = (C-R > 2) & (C-R < 80)
-                R,C = R[idx],C[idx]
-                idx = np.arange(R.size)
-                idx = np.random.choice(idx,100000)
-                R,C = R[idx],C[idx]
-                #np.nan_to_num(X,copy=False)
-                #clist = coords['chr'+Key]
-                clist = coords[chromnams[K]]
-                try:
-                    chroms.append(np.vstack((f for f in trainUtils.buildmatrix(
-                                             X,coords[chromnams[K]],width=args.width,
-                                             chrm=Key,res=resolution,positive=True))))
-                    neg_coords = [(r,c) for r,c in zip(R,C)]
-                    stop = int(chroms[-1].shape[0] * 1.2)
-                    fakechroms.append(np.vstack((f for f in trainUtils.buildmatrix(
+    positive_class = {}
+    negative_class = {}
+    for key in Lib.chromnames[:]:
+        if key.startswith('chr'):
+            chromname=key
+        else:
+            chromname='chr'+key
+        X = Lib.matrix(balance=True,sparse=True).fetch(Key).tocsr() # lower down the memory usage
+        R,C = X.nonzero()
+        validmask = np.isfinite(X.data) # non-nan
+        R,C,data = R[validmask],C[validmask],X.data[validmask]
+        X = csr_matrix((data, (R, C)), shape=X.shape)
+        del data
+        idx = (C-R > 2) & (C-R < 80)
+        R,C = R[idx],C[idx]
+        idx = np.arange(R.size)
+        idx = np.random.choice(idx,100000)
+        R,C = R[idx],C[idx]
+        clist = coords[chromname]
+        try:
+            positive_class[chromname] = np.vstack((f for f in trainUtils.buildmatrix(
+                                             X,coords[chromname],width=args.width,
+                                             chrm=chromname,res=resolution,positive=True)))
+            neg_coords = [(r,c) for r,c in zip(R,C)]
+            stop = int(chroms[-1].shape[0] * 1.2)
+            negative_class[chromname]=np.vstack((f for f in trainUtils.buildmatrix(
                                  X,neg_coords,width=args.width,
-                                 chrm=Key,
+                                 chrm=chromname,
                                  res=resolution,positive=False,stop=stop))))
 
-                except:
-                    print('{} failed with {} coords'.format(Key,len(clist)))
-        Xtrain = np.vstack(chroms)
-        Xfake = np.vstack(fakechroms)
-        del chroms[:]
-        del fakechroms[:]
-        np.random.shuffle(Xtrain)
-        np.random.shuffle(Xfake)
-        print('pos/neg: ',Xtrain.shape[0],Xfake.shape[0])
+            except:
+                print('{} failed with {} coords'.format(Key,len(clist)))
+    for key in Lib.chromnames[:]:
+        if key.startswith('chr'):
+            chromname=key
+        else:
+            chromname='chr'+key
+ 
+            Xtrain = np.vstack((v for k,v in positive_class.items() if k!=chromname))
+            Xfake = np.vstack((v for k,v in negative_class.items() if k!=chromname))
+            print(chromname,'pos/neg: ',Xtrain.shape[0],Xfake.shape[0])
 
-        model = trainUtils.trainRF(Xtrain,Xfake)
+            model = trainUtils.trainRF(Xtrain,Xfake)
 
-        with open(args.output+'/'+chromnams[k]+'.pkl','wb') as o:
+        with open(args.output+'/'+chromname+'.pkl','wb') as o:
             pickle.dump(model,o)
 
