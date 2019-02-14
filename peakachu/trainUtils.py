@@ -15,7 +15,6 @@ import gc
 def buildmatrix(Matrix, coords,width=5,lower=1,positive=True,stop=5000):
     """
     Generate training set
-    :param Matrix: single chromosome dense array
     :param coords: List of tuples containing coord bins
     :param width: Distance added to center. width=5 makes 11x11 windows
     :return: yields paired positive/negative samples for training
@@ -24,14 +23,14 @@ def buildmatrix(Matrix, coords,width=5,lower=1,positive=True,stop=5000):
     negcount=0
     for c in coords:
         x,y = c[0],c[1]
-        distance=abs(y-x)
         if y-x < lower:
             pass
         else:
-            try:
+#            try:
+            for sth in range(2):
                 window = Matrix[x-width:x+width+1,
                                 y-width:y+width+1].toarray()
-                if np.count_nonzero(window) < window.size*.1:
+                if np.count_nonzero(window) < window.size*.2:
                     pass
                 else:
                     center = window[width,width]
@@ -46,21 +45,19 @@ def buildmatrix(Matrix, coords,width=5,lower=1,positive=True,stop=5000):
                         window = window.flatten()
                         s2 = (1+2*width)**2
                         s2//=2
-                        additional=1
                         if window.size==1+2*ranks.size and np.all(np.isfinite(window)):
                             if not positive:
                                 negcount+=1
                             if negcount >=stop:
                                 raise StopIteration
                             yield window
-            except:
-                pass
+#            except:
+#                pass
 
 def trainRF(X,F,nproc=1):
     """
     :param X: training set from buildmatrix
     :param distances:
-    :return: ExtraTreesClassifier object
     """
     print('input data {} peaks and {} background'.format(X.shape[0],F.shape[0]))
     gc.collect()
@@ -76,7 +73,7 @@ def trainRF(X,F,nproc=1):
     params['criterion'] = ['entropy','gini']
     #model = forest(**params)
     mcc = metrics.make_scorer(metrics.matthews_corrcoef)
-    model = GridSearchCV(forest(),param_grid=params,scoring=mcc,verbose=3,n_jobs=1,cv=3)
+    model = GridSearchCV(forest(),param_grid=params,scoring=mcc,verbose=2,n_jobs=1,cv=3)
     y = np.array([1]*X.shape[0] + [0]*F.shape[0])
     x = np.vstack((X,F))
     model.fit(x,y)

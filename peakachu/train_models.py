@@ -23,15 +23,17 @@ def main(args):
             chromname=key
         else:
             chromname='chr'+key
+        print('collecting from {}'.format(key))
         X = Lib.matrix(balance=True,sparse=True).fetch(key).tocsr() # lower down the memory usage
         R,C = X.nonzero()
         validmask = np.isfinite(X.data) # non-nan
         R,C,data = R[validmask],C[validmask],X.data[validmask]
         X = csr_matrix((data, (R, C)), shape=X.shape)
         del data
-        idx = (C-R > 4) & (C-R < 75)
+        idx = (C-R > 3) & (C-R < 80)
         R,C = R[idx],C[idx]
         clist = coords[chromname]
+        print(len(clist))
         positive_class[chromname] = np.vstack((f for f in trainUtils.buildmatrix(
                                              X,coords[chromname],width=args.width,
                                              positive=True)))
