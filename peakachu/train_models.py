@@ -10,6 +10,7 @@ def main(args):
     from scipy.sparse import csr_matrix
     import cooler
     import random
+    pathlib.Path(args.output).mkdir(parents=True, exist_ok=True)
     Lib = cooler.Cooler(args.path)
     #resolution = Lib.binsize
     resolution = 10000

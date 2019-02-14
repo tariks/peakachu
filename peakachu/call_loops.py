@@ -38,12 +38,12 @@ def main(args):
         del X
         gc.collect()
         idx = np.argsort(p)
-        idx = idx[-20000:]
+        idx = idx[-12000:]
         r,c = r[idx],c[idx]
         rawmatrix[matrix==0]=0
         raw = rawmatrix[r,c]
         idx = np.argsort(raw)
-        idx = idx[-15000:]
+        idx = idx[-10000:]
         D = {(r[i],c[i]): raw[i] for i in idx}
         gc.collect()
         final_list = peakacluster.local_clustering(D,res)
@@ -59,5 +59,4 @@ def main(args):
             P=matrix[r[i],c[i]]
             print(chrom,r[i]*res,r[i]*res+res,chrom,
                   c[i]*res,c[i]*res+res,
-                  P,rawmatrix[r[i],c[i]],
-                  sep='\t')
+                  P,sep='\t')

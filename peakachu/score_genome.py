@@ -21,10 +21,14 @@ def main(args):
     mod = args.model
     with open(mod,'rb') as o:
         model = pickle.load(o)
-    for cname in Lib.chromnames:
-        X = scoreUtils.Chromosome(Lib.matrix(balance=True, sparse=True).fetch(cname).tocsr(),
+    for key in Lib.chromnames:
+        if key.startswitch('c'):
+            cname=key
+        else:
+            cname='chr'+key
+        X = scoreUtils.Chromosome(Lib.matrix(balance=True, sparse=True).fetch(key).tocsr(),
                                 model=model,
-                                cname='chr'+cname,lower=args.lower,
+                                cname=cname,lower=args.lower,
                                 upper=args.upper,res=resolution,
                                 width=args.width)
         result,R = X.score()
