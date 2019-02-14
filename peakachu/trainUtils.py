@@ -12,7 +12,7 @@ from collections import defaultdict
 from scipy import stats
 import gc
 
-def buildmatrix(Matrix, coords,width=10,lower=1,L=False,chrm='chr1',res=10000,positive=True,stop=5000):
+def buildmatrix(Matrix, coords,width=5,lower=1,positive=True,stop=5000):
     """
     Generate training set
     :param Matrix: single chromosome dense array
@@ -20,20 +20,8 @@ def buildmatrix(Matrix, coords,width=10,lower=1,L=False,chrm='chr1',res=10000,po
     :param width: Distance added to center. width=5 makes 11x11 windows
     :return: yields paired positive/negative samples for training
     """
-    histonedicts = []
-    if chrm[0]!='c':
-        chrm='chr'+chrm
     w2 = int(width//2)
     negcount=0
-    if L:
-        import pandas as pd
-        for track in L:
-            table = pd.read_table(track,usecols=[0,1],index_col=0).loc[chrm]
-            table = table.values.T[0].tolist()
-            hdict = defaultdict(int)
-            for i in table:
-                hdict[int(i//res)]+=1
-            histonedicts.append(hdict)
     for c in coords:
         x,y = c[0],c[1]
         distance=abs(y-x)
@@ -59,11 +47,6 @@ def buildmatrix(Matrix, coords,width=10,lower=1,L=False,chrm='chr1',res=10000,po
                         s2 = (1+2*width)**2
                         s2//=2
                         additional=1
-                        if len(histonedicts) > 0:
-                            for track in histonedicts:
-                                window = np.append(window,np.array([track[x],track[y]]))
-                                additional+=2
-                        #if window.size==s2+additional and np.all(np.isfinite(window)):
                         if window.size==1+2*ranks.size and np.all(np.isfinite(window)):
                             if not positive:
                                 negcount+=1
