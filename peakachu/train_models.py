@@ -34,15 +34,14 @@ def main(args):
         clist = coords[chromname]
         positive_class[chromname] = np.vstack((f for f in trainUtils.buildmatrix(
                                              X,coords[chromname],width=args.width,
-                                             chrm=chromname,res=resolution,positive=True)))
+                                             positive=True)))
         neg_coords = [(r,c) for r,c in zip(R,C)]
         random.shuffle(neg_coords)
         neg_coords=neg_coords[::5]
         stop = len(clist)
         negative_class[chromname]=np.vstack((f for f in trainUtils.buildmatrix(
                              X,neg_coords,width=args.width,
-                             chrm=chromname,
-                             res=resolution,positive=False,stop=stop)))
+                             positive=False,stop=stop)))
 
     for key in Lib.chromnames[:]:
         if key.startswith('chr'):

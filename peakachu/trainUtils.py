@@ -31,7 +31,7 @@ def buildmatrix(Matrix, coords,width=5,lower=1,positive=True,stop=5000):
             try:
                 window = Matrix[x-width:x+width+1,
                                 y-width:y+width+1].toarray()
-                if np.count_nonzero(window) < window.size*.2:
+                if np.count_nonzero(window) < window.size*.1:
                     pass
                 else:
                     center = window[width,width]
