@@ -115,7 +115,7 @@ def parsebed(chiafile,res=10000,lower=1):
             a,b = int(a),int(b)
             a//=res
             b//=res
-            if b-a > lower:
+            if b-a > lower and 'Y' not in s[0] and 'X' not in s[0] and 'MT' not in s[0]:
                 coords[s[0]].append((a,b))
     return coords
 
