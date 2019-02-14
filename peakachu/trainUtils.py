@@ -43,13 +43,13 @@ def buildmatrix(Matrix, coords,width=10,lower=1,L=False,chrm='chr1',res=10000,po
             try:
                 window = Matrix[x-width:x+width+1,
                                 y-width:y+width+1].toarray()
-                if np.count_nonzero(window) < window.size*.1:
+                if np.count_nonzero(window) < window.size*.2:
                     pass
                 else:
                     center = window[width,width]
                     ls = window.shape[0]
                     p2LL = center/np.mean(window[ls-1-ls//4:ls,:1+ls//4])
-                    if positive and p2LL < .5:
+                    if positive and p2LL < .2:
                         pass
                     else:
                         indicatar_vars = np.array([p2LL])
