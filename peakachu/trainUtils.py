@@ -26,8 +26,7 @@ def buildmatrix(Matrix, coords,width=5,lower=1,positive=True,stop=5000):
         if y-x < lower:
             pass
         else:
-#            try:
-            for sth in range(2):
+            try:
                 window = Matrix[x-width:x+width+1,
                                 y-width:y+width+1].toarray()
                 if np.count_nonzero(window) < window.size*.2:
@@ -45,14 +44,14 @@ def buildmatrix(Matrix, coords,width=5,lower=1,positive=True,stop=5000):
                         window = window.flatten()
                         s2 = (1+2*width)**2
                         s2//=2
-                        if window.size==1+2*ranks.size and np.all(np.isfinite(window)):
+                        if window.size==1+2*(2*width+1)**2 and np.all(np.isfinite(window)):
                             if not positive:
                                 negcount+=1
                             if negcount >=stop:
                                 raise StopIteration
                             yield window
-#            except:
-#                pass
+            except:
+                pass
 
 def trainRF(X,F,nproc=1):
     """
