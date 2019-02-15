@@ -33,14 +33,17 @@ def main(args):
         idx = (C-R > 3) & (C-R < 80)
         R,C = R[idx],C[idx]
         clist = coords[chromname]
-        positive_class[chromname] = np.vstack((f for f in trainUtils.buildmatrix(
+        try:
+            positive_class[chromname] = np.vstack((f for f in trainUtils.buildmatrix(
                                              X,clist,width=args.width)))
-        neg_coords = [(r,c) for r,c in zip(R,C)]
-        random.shuffle(neg_coords)
-        stop = len(clist)
-        negative_class[chromname]=np.vstack((f for f in trainUtils.buildmatrix(
+            neg_coords = [(r,c) for r,c in zip(R,C)]
+            random.shuffle(neg_coords)
+            stop = len(clist)
+            negative_class[chromname]=np.vstack((f for f in trainUtils.buildmatrix(
                              X,neg_coords[::5],width=args.width,
                              positive=False,stop=stop)))
+        except:
+            print(chromname, ' failed to gather fts')
 
     for key in Lib.chromnames[:]:
         if key.startswith('chr'):
