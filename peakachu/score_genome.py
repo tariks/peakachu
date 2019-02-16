@@ -22,7 +22,7 @@ def main(args):
     with open(mod,'rb') as o:
         model = pickle.load(o)
     for key in Lib.chromnames:
-        if key.startswitch('c'):
+        if key.startswith('c'):
             cname=key
         else:
             cname='chr'+key

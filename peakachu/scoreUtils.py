@@ -35,8 +35,11 @@ class Chromosome():
         for c in coords:
             x,y = c[0],c[1]
             distance = abs(y-x)
-            window = self.M[x-width:x+width+1,
+            try:
+                window = self.M[x-width:x+width+1,
                         y-width:y+width+1].toarray()
+            except:
+                continue
             if np.count_nonzero(window) < window.size*.2:
                 pass
             else:
