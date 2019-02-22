@@ -23,7 +23,7 @@ def main(args):
         gc.collect()
         idx = np.argsort(p)
         idx = idx[-10000:]
-        D = {(r[i],c[i]): raw.get((r[i],c[i])) for i in idx}
+        D = {(r[i],c[i]): rawmatrix.get((r[i],c[i])) for i in idx}
         final_list = peakacluster.local_clustering(D,res=res)
         final_list = [i[0] for i in final_list]
         r = [i[0] for i in final_list]
