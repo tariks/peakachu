@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import argparse, pickle
+import argparse
+from sklearn.externals import joblib
 import gc
 import pathlib
 
@@ -17,10 +18,8 @@ def main(args):
     #resolution = Lib.binsize
     resolution = 10000
     chroms = []
-
-    mod = args.model
-    with open(mod,'rb') as o:
-        model = pickle.load(o)
+    
+    model = joblib.load(args.model)
     for key in Lib.chromnames:
         if key.startswith('c'):
             cname=key

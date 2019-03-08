@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-import argparse, pickle
+import argparse
+from sklearn.externals import joblib
 import gc
 import pathlib
 
@@ -13,9 +14,8 @@ def main(args):
     cikada='ch'+cikada.split('ch')[-1]
 
 
-    mod = args.model
-    with open(mod,'rb') as o:
-        model = pickle.load(o)
+    model = joblib.load(args.model)
+
     import cooler
     Lib = cooler.Cooler(args.path)
     if cikada in Lib.chromnames:
@@ -24,7 +24,6 @@ def main(args):
         ccname=cikada.split('hr')[1]
     #resolution = Lib.binsize
     resolution = 10000
-    chroms = []
 
     X = scoreUtils.Chromosome(Lib.matrix(balance=True, sparse=True).fetch(ccname).tocsr(),
                                 model=model,

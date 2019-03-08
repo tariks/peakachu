@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import cooler, argparse, sys, logging, logging.handlers, pickle
+import cooler, argparse, sys, logging, logging.handlers
 import numpy as np
 import pandas as pd
 import random

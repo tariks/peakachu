@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import pickle
+from sklearn.externals import joblib
 import gc
 import pathlib
 
@@ -56,6 +56,5 @@ def main(args):
         print(chromname,'pos/neg: ',Xtrain.shape[0],Xfake.shape[0])
         model = trainUtils.trainRF(Xtrain,Xfake)
 
-        with open(args.output+'/'+chromname+'.pkl','wb') as o:
-            pickle.dump(model,o)
+        joblib.dump(model, args.output+'/'+chromname+'.pkl', compress=('xz',3))
 
