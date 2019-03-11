@@ -30,7 +30,7 @@ def main(args):
         R,C,data = R[validmask],C[validmask],X.data[validmask]
         X = csr_matrix((data, (R, C)), shape=X.shape)
         del data
-        idx = (C-R > 2) & (C-R < 80)
+        idx = (C-R > 2) & (C-R < 70)
         R,C = R[idx],C[idx]
         clist = coords[chromname]
         try:
@@ -38,7 +38,7 @@ def main(args):
                                              X,clist,width=args.width)))
             neg_coords = [(r,c) for r,c in zip(R,C)]
             random.shuffle(neg_coords)
-            stop = len(clist)
+            stop = 9*len(clist)//10
             negative_class[chromname]=np.vstack((f for f in trainUtils.buildmatrix(
                              X,neg_coords[::5],width=args.width,
                              positive=False,stop=stop)))

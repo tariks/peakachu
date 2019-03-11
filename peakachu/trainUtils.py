@@ -29,13 +29,13 @@ def buildmatrix(Matrix, coords,width=5,lower=1,positive=True,stop=5000):
             try:
                 window = Matrix[x-width:x+width+1,
                                 y-width:y+width+1].toarray()
-                if np.count_nonzero(window) < window.size*.2:
+                if np.count_nonzero(window) < window.size*.1:
                     pass
                 else:
                     center = window[width,width]
                     ls = window.shape[0]
                     p2LL = center/np.mean(window[ls-1-ls//4:ls,:1+ls//4])
-                    if positive and p2LL < .1:
+                    if positive and p2LL < 0:
                         pass
                     else:
                         indicatar_vars = np.array([p2LL])
@@ -61,16 +61,16 @@ def trainRF(X,F,nproc=1):
     print('input data {} peaks and {} background'.format(X.shape[0],F.shape[0]))
     gc.collect()
     params = {}
-    #params['class_weight'] = ['balanced',None]
+    params['class_weight'] = ['balanced',None]
     #params['class_weight'] += [{1: w} for w in range(5,10000,500)]
     params['n_estimators'] = [100]
     params['n_jobs'] = [1]
     params['max_features'] = ['auto']
-    params['max_depth'] = [10,20]
+    params['max_depth'] = [20]
     params['random_state'] = [42]
     #from hellinger_distance_criterion import HellingerDistanceCriterion as hdc
     #h = hdc(1,np.array([2],dtype='int64'))
-    params['criterion'] = ['entropy','gini']
+    params['criterion'] = ['gini']
     #model = forest(**params)
     mcc = metrics.make_scorer(metrics.matthews_corrcoef)
     model = GridSearchCV(forest(),param_grid=params,scoring=mcc,verbose=2,n_jobs=1,cv=5)
