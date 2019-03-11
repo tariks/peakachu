@@ -16,7 +16,7 @@ def main(args):
     nam = args.path.split('.cool')[0]
     nam = nam.split('/')[-1]
     #resolution = Lib.binsize
-    resolution = 10000
+    resolution = args.resolution
     chroms = []
     
     model = joblib.load(args.model)
@@ -25,7 +25,7 @@ def main(args):
             cname=key
         else:
             cname='chr'+key
-        X = scoreUtils.Chromosome(Lib.matrix(balance=True, sparse=True).fetch(key).tocsr(),
+        X = scoreUtils.Chromosome(Lib.matrix(balance=args.balance, sparse=True).fetch(key).tocsr(),
                                 model=model,
                                 cname=cname,lower=args.lower,
                                 upper=args.upper,res=resolution,

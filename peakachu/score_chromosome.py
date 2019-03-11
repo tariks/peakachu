@@ -23,9 +23,9 @@ def main(args):
     else:
         ccname=cikada.split('hr')[1]
     #resolution = Lib.binsize
-    resolution = 10000
+    resolution = args.resolution
 
-    X = scoreUtils.Chromosome(Lib.matrix(balance=True, sparse=True).fetch(ccname).tocsr(),
+    X = scoreUtils.Chromosome(Lib.matrix(balance=args.balance, sparse=True).fetch(ccname).tocsr(),
                                 model=model,
                                 cname=cikada,lower=args.lower,
                                 upper=args.upper,res=resolution,

@@ -13,7 +13,7 @@ def main(args):
     pathlib.Path(args.output).mkdir(parents=True, exist_ok=True)
     Lib = cooler.Cooler(args.path)
     #resolution = Lib.binsize
-    resolution = 10000
+    resolution = args.resolution
     coords = trainUtils.parsebed(args.bedpe,lower=2,res=resolution)
     # train model per chromosome
     positive_class = {}
@@ -24,13 +24,13 @@ def main(args):
         else:
             chromname='chr'+key
         print('collecting from {}'.format(key))
-        X = Lib.matrix(balance=True,sparse=True).fetch(key).tocsr() # lower down the memory usage
+        X = Lib.matrix(balance=args.balance,sparse=True).fetch(key).tocsr() # lower down the memory usage
         R,C = X.nonzero()
         validmask = np.isfinite(X.data) # non-nan
         R,C,data = R[validmask],C[validmask],X.data[validmask]
         X = csr_matrix((data, (R, C)), shape=X.shape)
         del data
-        idx = (C-R > 2) & (C-R < 70)
+        idx = (C-R > 2) & (C-R < 75)
         R,C = R[idx],C[idx]
         clist = coords[chromname]
         try:

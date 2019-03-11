@@ -1,12 +1,13 @@
 #!/usr/env/bin python
 import gc
+import sys
 
 def main(args):
     import numpy as np
     import pandas as pd
     from scipy import ndimage
     from peakachu import peakacluster
-    res = 10000
+    res = args.resolution
     x = pd.read_table(args.infile,index_col=0,
                       usecols=[0,1,4,6,7],header=None)
     chromosomes = list(set(x.index))
