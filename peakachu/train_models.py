@@ -30,7 +30,7 @@ def main(args):
         R,C,data = R[validmask],C[validmask],X.data[validmask]
         X = csr_matrix((data, (R, C)), shape=X.shape)
         del data
-        idx = (C-R > 3) & (C-R < 80)
+        idx = (C-R > 2) & (C-R < 80)
         R,C = R[idx],C[idx]
         clist = coords[chromname]
         try:

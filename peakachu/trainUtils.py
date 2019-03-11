@@ -35,7 +35,7 @@ def buildmatrix(Matrix, coords,width=5,lower=1,positive=True,stop=5000):
                     center = window[width,width]
                     ls = window.shape[0]
                     p2LL = center/np.mean(window[ls-1-ls//4:ls,:1+ls//4])
-                    if positive and p2LL < .2:
+                    if positive and p2LL < .1:
                         pass
                     else:
                         indicatar_vars = np.array([p2LL])
@@ -61,18 +61,19 @@ def trainRF(X,F,nproc=1):
     print('input data {} peaks and {} background'.format(X.shape[0],F.shape[0]))
     gc.collect()
     params = {}
-    params['class_weight'] = ['balanced',None]
+    #params['class_weight'] = ['balanced',None]
     #params['class_weight'] += [{1: w} for w in range(5,10000,500)]
     params['n_estimators'] = [100]
     params['n_jobs'] = [1]
     params['max_features'] = ['auto']
+    params['max_depth'] = [10,20]
     params['random_state'] = [42]
     #from hellinger_distance_criterion import HellingerDistanceCriterion as hdc
     #h = hdc(1,np.array([2],dtype='int64'))
     params['criterion'] = ['entropy','gini']
     #model = forest(**params)
     mcc = metrics.make_scorer(metrics.matthews_corrcoef)
-    model = GridSearchCV(forest(),param_grid=params,scoring=mcc,verbose=2,n_jobs=1,cv=3)
+    model = GridSearchCV(forest(),param_grid=params,scoring=mcc,verbose=2,n_jobs=1,cv=5)
     y = np.array([1]*X.shape[0] + [0]*F.shape[0])
     x = np.vstack((X,F))
     model.fit(x,y)
@@ -82,7 +83,7 @@ def trainRF(X,F,nproc=1):
     print(model.best_score_)
     fts = fts.tolist()
     print('{} peaks {} controls'.format(X.shape[0],F.shape[0]))
-    return model
+    return model.best_estimator_
 
 
 def parsebed(chiafile,res=10000,lower=1):
