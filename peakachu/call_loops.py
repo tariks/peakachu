@@ -17,13 +17,17 @@ def main(args):
         r = X[:,0].astype(int)//res
         c = X[:,1].astype(int)//res
         p = X[:,2].astype(float)
+        idx = (p > .9)
         raw = X[:,3].astype(float)
+        r,c,p,raw = r[idx],c[idx],p[idx],raw[idx]
         rawmatrix={(r[i],c[i]): raw[i] for i in range(len(r))}
         matrix={(r[i],c[i]): p[i] for i in range(len(r))}
         del X
         gc.collect()
         idx = np.argsort(p)
         idx = idx[-10000:]
+        idx = np.argsort(raw[idx])
+        idx = idx[-9000:]
         D = {(r[i],c[i]): rawmatrix.get((r[i],c[i])) for i in idx}
         final_list = peakacluster.local_clustering(D,res=res)
         final_list = [i[0] for i in final_list]
