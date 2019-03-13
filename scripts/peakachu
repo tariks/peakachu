@@ -24,11 +24,11 @@ def getargs():
     subpool.set_defaults(func=call_loops.main)
     subs=[subdepth,subtrain,subchrom,subgen,subpool]
     for i in subs:
-        i.add_argument('--balance',action='store_true')
         i.add_argument('-r', '--resolution',
                          help = 'Resolution in bp, default 10000',
                          type = int, default=10000)
     for i in subs[:-1]:
+        i.add_argument('--balance',action='store_true')
         i.add_argument('-p', '--path',
                          help = 'URI string pointing to a .cool or multi-res .cool file. Append ::10000 to the filename of a multi-res .cool to use the 10kb matrix.')
     for i in subs[1:-1]:
@@ -43,6 +43,8 @@ def getargs():
     subpool.add_argument('-i', '--infile',
                         help = '''Path to the bedpe file containing model output''')
 
+    subpool.add_argument('-t', '--threshold', type = float, default = .9,
+                        help = 'Probability threshold applied before peak calling, default .9')
     subtrain.add_argument('-b', '--bedpe',
                         help = '''Path to the bedpe file containing pairs of resolutions
                                corresponding to experimentally detected loops.''')
