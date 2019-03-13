@@ -17,27 +17,41 @@ def main(args):
         r = X[:,0].astype(int)//res
         c = X[:,1].astype(int)//res
         p = X[:,2].astype(float)
-        idx = (p > args.threshold)
         raw = X[:,3].astype(float)
-        r,c,p,raw = r[idx],c[idx],p[idx],raw[idx]
-        rawmatrix={(r[i],c[i]): raw[i] for i in range(len(r))}
+        d = c-r
+        unique_d=list(set(d.tolist()))
+        idx = (p > args.threshold)
+        r,c,p,raw,d = r[idx],c[idx],p[idx],raw[idx],d[idx]
+        #rawmatrix={(r[i],c[i]): raw[i] for i in range(len(r))}
         matrix={(r[i],c[i]): p[i] for i in range(len(r))}
+        count=p.size
+        while count > 10000:
+            D={}
+            for distance in unique_d:
+                dx=(d==distance)
+                dr,dc,dp,draw=r[dx],c[dx],p[dx],raw[dx]
+                dx=(dp>np.median(dp))
+                dr,dc,dp,draw=dr[dx],dc[dx],dp[dx],draw[dx]
+                for i in range(dr.size):
+                    D[(dr[i],dc[i])]=draw[i]
+            count=len(D.keys())
+
         del X
         gc.collect()
-        idx = np.argsort(p)
-        idx = idx[-10000:]
-        idx = np.argsort(raw[idx])
-        idx = idx[-9000:]
-        D = {(r[i],c[i]): rawmatrix.get((r[i],c[i])) for i in idx}
+        #idx = np.argsort(p)
+        #idx = idx[0-idx.size//2:]
+        #idx = np.argsort(raw[idx])
+        #idx = idx[0-idx.size//2:]
+        #D = {(r[i],c[i]): rawmatrix.get((r[i],c[i])) for i in idx}
         final_list = peakacluster.local_clustering(D,res=res)
         final_list = [i[0] for i in final_list]
         r = [i[0] for i in final_list]
         c = [i[1] for i in final_list]
         p = np.array([matrix.get((r[i],c[i])) for i in range(len(r))])
-        if len(r) > 1000:
+        if len(r) > 2000:
             sorted_index=np.argsort(p)
-            r = [r[i] for i in sorted_index[-1000:]]
-            c = [c[i] for i in sorted_index[-1000:]]
+            r = [r[i] for i in sorted_index[-2000:]]
+            c = [c[i] for i in sorted_index[-2000:]]
         for i in range(len(r)):
             P = matrix.get((r[i],c[i]))
             print(chrom,r[i]*res,r[i]*res+res,chrom,
