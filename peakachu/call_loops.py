@@ -32,6 +32,7 @@ def main(args):
                 dr,dc,dp,draw=r[dx],c[dx],p[dx],raw[dx]
                 dx=(dp>np.median(dp))
                 dr,dc,dp,draw=dr[dx],dc[dx],dp[dx],draw[dx]
+                d=dc-dr
                 for i in range(dr.size):
                     D[(dr[i],dc[i])]=draw[i]
             count=len(D.keys())
