@@ -17,7 +17,7 @@ def main(args):
         r = X[:,0].astype(int)//res
         c = X[:,1].astype(int)//res
         p = X[:,2].astype(float)
-        idx = (p > .9)
+        idx = (p > args.threshold)
         raw = X[:,3].astype(float)
         r,c,p,raw = r[idx],c[idx],p[idx],raw[idx]
         rawmatrix={(r[i],c[i]): raw[i] for i in range(len(r))}
