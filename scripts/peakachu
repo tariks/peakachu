@@ -23,6 +23,12 @@ def getargs():
             help='''Print centroid loci from score_x output''')
     subpool.set_defaults(func=call_loops.main)
     subs=[subdepth,subtrain,subchrom,subgen,subpool]
+    #subpool.add_argument('-l','--lower',
+    #                     help = 'Lower bound of report in bp (20000)',
+    #                     type = int, default=20000)
+    #subpool.add_argument('-u','--upper',
+    #                     help = 'Upper bound of report in bp (300000)',
+    #                     type = int, default=300000)
     for i in subs:
         i.add_argument('-r', '--resolution',
                          help = 'Resolution in bp, default 10000',
