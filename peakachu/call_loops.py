@@ -5,7 +5,7 @@ import sys
 def main(args):
     import numpy as np
     import pandas as pd
-    from scipy import ndimage
+    from collections import defaultdict
     from peakachu import peakacluster
     res = args.resolution
     x = pd.read_table(args.infile,index_col=0,
@@ -19,31 +19,33 @@ def main(args):
         p = X[:,2].astype(float)
         raw = X[:,3].astype(float)
         d = c-r
-        unique_d=list(set(d.tolist()))
         idx = (p > args.threshold)
         r,c,p,raw,d = r[idx],c[idx],p[idx],raw[idx],d[idx]
+        tmpr,tmpc,tmpp,tmpraw,tmpd = r,c,p,raw,d
         #rawmatrix={(r[i],c[i]): raw[i] for i in range(len(r))}
         matrix={(r[i],c[i]): p[i] for i in range(len(r))}
-        count=p.size
+        count=10001
         while count > 10000:
-            D={}
+            D=defaultdict(float)
+            P=defaultdict(float)
+            unique_d=list(set(tmpd.tolist()))
             for distance in unique_d:
-                dx=(d==distance)
-                dr,dc,dp,draw=r[dx],c[dx],p[dx],raw[dx]
-                dx=(dp>np.median(dp))
+                dx=(tmpd==distance)
+                dr,dc,dp,draw=tmpr[dx],tmpc[dx],tmpp[dx],tmpraw[dx]
+                dx=(dp>np.percentile(dp,10))
                 dr,dc,dp,draw=dr[dx],dc[dx],dp[dx],draw[dx]
-                d=dc-dr
                 for i in range(dr.size):
-                    D[(dr[i],dc[i])]=draw[i]
+                    D[(dr[i],dc[i])]+=draw[i]
+                    P[(dr[i],dc[i])]+=dp[i]
             count=len(D.keys())
+            tmpr=np.array([i[0] for i in P.keys()])
+            tmpc=np.array([i[1] for i in P.keys()])
+            tmpp=np.array([P.get(i) for i in P.keys()])
+            tmpraw=np.array([D.get(i) for i in P.keys()])
+            tmpd=tmpc-tmpr
 
         del X
         gc.collect()
-        #idx = np.argsort(p)
-        #idx = idx[0-idx.size//2:]
-        #idx = np.argsort(raw[idx])
-        #idx = idx[0-idx.size//2:]
-        #D = {(r[i],c[i]): rawmatrix.get((r[i],c[i])) for i in idx}
         final_list = peakacluster.local_clustering(D,res=res)
         final_list = [i[0] for i in final_list]
         r = [i[0] for i in final_list]
