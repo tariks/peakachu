@@ -73,7 +73,7 @@ def trainRF(X,F,nproc=1):
     params['criterion'] = ['gini']
     #model = forest(**params)
     mcc = metrics.make_scorer(metrics.matthews_corrcoef)
-    model = GridSearchCV(forest(),param_grid=params,scoring=mcc,verbose=2,n_jobs=1,cv=5)
+    model = GridSearchCV(forest(),param_grid=params,scoring=mcc,verbose=2,n_jobs=1,cv=3)
     y = np.array([1]*X.shape[0] + [0]*F.shape[0])
     x = np.vstack((X,F))
     model.fit(x,y)
