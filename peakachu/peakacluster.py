@@ -97,12 +97,14 @@ def local_clustering(Donuts, res, min_count=3, r=20000, sumq=1):
     y_anchors = find_anchors(y, min_count=min_count, min_dis=r, res=res)
     r = max(r//res, 1)
     visited = set()
+    lookup = set(zip(x, y))
     for x_a in x_anchors:
         for y_a in y_anchors:
             sort_list = []
-            for i, j in zip(x, y):
-                if (i>=x_a[1]) and (i<=x_a[2]) and (j>=y_a[1]) and (j<=y_a[2]):
-                    sort_list.append((Donuts[(i,j)], (i,j)))
+            for i in range(x_a[1], x_a[2]+1):
+                for j in range(y_a[1], y_a[2]+1):
+                    if (i, j) in lookup:
+                        sort_list.append((Donuts[(i,j)][0], (i,j)))
             sort_list.sort(reverse=True)
             _cluster_core(sort_list, r, visited, final_list)
     
