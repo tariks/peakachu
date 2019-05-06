@@ -24,8 +24,8 @@ def main(args):
         tmpr,tmpc,tmpp,tmpraw,tmpd = r,c,p,raw,d
         #rawmatrix={(r[i],c[i]): raw[i] for i in range(len(r))}
         matrix={(r[i],c[i]): p[i] for i in range(len(r))}
-        count=10001
-        while count > 10000:
+        count=40001
+        while count > 40000:
             D=defaultdict(float)
             P=defaultdict(float)
             unique_d=list(set(tmpd.tolist()))
@@ -51,10 +51,10 @@ def main(args):
         r = [i[0] for i in final_list]
         c = [i[1] for i in final_list]
         p = np.array([matrix.get((r[i],c[i])) for i in range(len(r))])
-        if len(r) > 2000:
+        if len(r) > 7000:
             sorted_index=np.argsort(p)
-            r = [r[i] for i in sorted_index[-2000:]]
-            c = [c[i] for i in sorted_index[-2000:]]
+            r = [r[i] for i in sorted_index[-7000:]]
+            c = [c[i] for i in sorted_index[-7000:]]
         for i in range(len(r)):
             P = matrix.get((r[i],c[i]))
             print(chrom,r[i]*res,r[i]*res+res,chrom,
