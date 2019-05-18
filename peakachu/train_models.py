@@ -14,7 +14,8 @@ def main(args):
     Lib = cooler.Cooler(args.path)
     #resolution = Lib.binsize
     resolution = args.resolution
-    coords = trainUtils.parsebed(args.bedpe,lower=2,res=resolution)
+    coords = trainUtils.parsebed(args.bedpe,lower=1,res=resolution)
+    negcoords = trainUtils.parsebed(args.control,lower=1,res=resolution)
     # train model per chromosome
     positive_class = {}
     negative_class = {}
@@ -30,18 +31,14 @@ def main(args):
         R,C,data = R[validmask],C[validmask],X.data[validmask]
         X = csr_matrix((data, (R, C)), shape=X.shape)
         del data
-        idx = (C-R > 20000//resolution) & (C-R < 160000//resolution)
-        R,C = R[idx],C[idx]
         clist = coords[chromname]
+        nlist = negcoords[chromname]
         try:
             positive_class[chromname] = np.vstack((f for f in trainUtils.buildmatrix(
                                              X,clist,width=args.width)))
-            neg_coords = [(r,c) for r,c in zip(R,C)]
-            random.shuffle(neg_coords)
-            stop = 9*len(clist)//10
-            negative_class[chromname]=np.vstack((f for f in trainUtils.buildmatrix(
-                             X,neg_coords[::5],width=args.width,
-                             positive=False,stop=stop)))
+            stop=positive_class[chromname].shape[0]
+            negative_class[chromname] = np.vstack((f for f in trainUtils.buildmatrix(
+                                             X,nlist,stop=stop,positive=False,width=args.width)))
         except:
             print(chromname, ' failed to gather fts')
 

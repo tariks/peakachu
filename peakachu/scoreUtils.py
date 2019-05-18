@@ -40,7 +40,7 @@ class Chromosome():
                         y-width:y+width+1].toarray()
             except:
                 continue
-            if np.count_nonzero(window) < window.size*.2:
+            if np.count_nonzero(window) < window.size*.1:
                 pass
             else:
                 try:
@@ -72,7 +72,7 @@ class Chromosome():
         coords = [(r, c) for r, c in zip(self.ridx, self.cidx)]
         p,clist = self.getwindow(coords)
         clist = np.r_[clist]
-        pfilter = p >= 0.5
+        pfilter = p >= 0.2
         ri = clist[:,0][pfilter]
         ci = clist[:,1][pfilter]
         result = sparse.csr_matrix((p[pfilter], (ri, ci)), shape=self.M.shape)

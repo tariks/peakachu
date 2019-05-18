@@ -35,7 +35,7 @@ def buildmatrix(Matrix, coords,width=5,lower=1,positive=True,stop=5000):
                     center = window[width,width]
                     ls = window.shape[0]
                     p2LL = center/np.mean(window[ls-1-ls//4:ls,:1+ls//4])
-                    if positive and p2LL < 0:
+                    if positive and p2LL < .5:
                         pass
                     else:
                         indicatar_vars = np.array([p2LL])
@@ -65,7 +65,7 @@ def trainRF(X,F,nproc=1):
     #params['class_weight'] += [{1: w} for w in range(5,10000,500)]
     params['n_estimators'] = [100]
     params['n_jobs'] = [1]
-    params['max_features'] = ['auto']
+    params['max_features'] = ['auto',100]
     params['max_depth'] = [20]
     params['random_state'] = [42]
     #from hellinger_distance_criterion import HellingerDistanceCriterion as hdc
