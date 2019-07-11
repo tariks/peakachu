@@ -54,9 +54,6 @@ def getargs():
     subtrain.add_argument('-b', '--bedpe',
                         help = '''Path to the bedpe file containing pairs of resolutions
                                corresponding to experimentally detected loops.''')
-    subtrain.add_argument('-c', '--control',
-                        help = '''bedpe file containing randomized coordinates.  
-                               use bedtools shuffle to create this directly from training list.''')
    
     ## Parse the command-line arguments
     commands = sys.argv[1:]
