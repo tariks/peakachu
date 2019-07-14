@@ -104,7 +104,7 @@ def local_clustering(Donuts, res, min_count=3, r=20000, sumq=1):
             for i in range(x_a[1], x_a[2]+1):
                 for j in range(y_a[1], y_a[2]+1):
                     if (i, j) in lookup:
-                        sort_list.append((Donuts[(i,j)][0], (i,j)))
+                        sort_list.append((Donuts[(i,j)], (i,j)))
             sort_list.sort(reverse=True)
             _cluster_core(sort_list, r, visited, final_list)
     

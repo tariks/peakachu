@@ -8,9 +8,9 @@ from random import randint
 from sklearn.ensemble import RandomForestClassifier as forest
 from sklearn.model_selection import GridSearchCV
 from sklearn import metrics
-from collections import defaultdict
+from collections import defaultdict, Counter
 from scipy import stats
-import gc
+import gc, random
 
 def buildmatrix(Matrix, coords,width=5,lower=1,positive=True,stop=5000):
     """
@@ -35,7 +35,7 @@ def buildmatrix(Matrix, coords,width=5,lower=1,positive=True,stop=5000):
                     center = window[width,width]
                     ls = window.shape[0]
                     p2LL = center/np.mean(window[ls-1-ls//4:ls,:1+ls//4])
-                    if positive and p2LL < 0:
+                    if positive and p2LL < 0.1:
                         pass
                     else:
                         indicatar_vars = np.array([p2LL])
@@ -86,16 +86,80 @@ def trainRF(X,F,nproc=1):
     return model.best_estimator_
 
 
-def parsebed(chiafile,res=10000,lower=1):
-    coords = defaultdict(list)
+def parsebed(chiafile, res=10000, lower=1, upper=5000000):
+
+    coords = defaultdict(set)
+    upper = upper // res
     with open(chiafile) as o:
         for line in o:
             s = line.split()
-            a,b = float(s[1]),float(s[4])
-            a,b = int(a),int(b)
-            a//=res
-            b//=res
-            if b-a > lower and 'Y' not in s[0] and 'X' not in s[0] and 'MT' not in s[0]:
-                coords[s[0]].append((a,b))
+            a, b = float(s[1]), float(s[4])
+            a, b = int(a), int(b)
+            if a > b:
+                a, b = b, a
+            a //= res
+            b //= res
+            if (b-a > lower) and (b-a < upper) and 'Y' not in s[0] and 'X' not in s[0] and 'M' not in s[0]:
+                coords[s[0]].add((a, b))
+    
+    for c in coords:
+        coords[c] = sorted(coords[c])
+
     return coords
 
+def learn_distri_kde(coords):
+
+    dis = []
+    for c in coords:
+        for a, b in coords[c]:
+            dis.append(b-a)
+    
+    lower = min(dis)
+    
+    # part 1: same distance distribution as the positive input
+    kde = stats.gaussian_kde(dis)
+
+    # part 2: random long-range interactions
+    counts, bins = np.histogram(dis, bins=100)
+    long_end = int(bins[-1])
+    tp = np.where(np.diff(counts) >= 0)[0] + 2
+    long_start = int(bins[tp[0]])
+
+    return kde, lower, long_start, long_end
+
+def negative_generating(M, kde, positives, lower, long_start, long_end):
+
+    positives = set(positives)
+    N = 3 * len(positives)
+    # part 1: kde trained from positive input
+    part1 = kde.resample(N).astype(int).ravel()
+    part1 = part1[(part1>=lower) & (part1<=long_end)]
+
+    # part 2: random long-range interactions
+    part2 = []
+    pool = np.arange(long_start, long_end+1)
+    tmp = np.cumsum(M.shape[0]-pool)
+    ref = tmp / tmp[-1]
+    for i in range(N):
+        r = np.random.random()
+        ii = np.searchsorted(ref, r)
+        part2.append(pool[ii])
+    
+    sample_dis = Counter(list(part1) + part2)
+
+    neg_coords = []
+    midx = np.arange(M.shape[0])
+    for i in sorted(sample_dis): # i cannot be zero
+        n_d = sample_dis[i]
+        R, C = midx[:-i], midx[i:]
+        tmp = np.array(M[R, C]).ravel()
+        tmp[np.isnan(tmp)] = 0
+        mask = tmp > 0
+        R, C = R[mask], C[mask]
+        pool = set(zip(R, C)) - positives
+        sub = random.sample(pool, n_d)
+        neg_coords.extend(sub)
+    
+    random.shuffle(neg_coords)
+
+    return neg_coords

@@ -7,14 +7,14 @@ def main(args):
     import numpy as np
     np.seterr(divide='ignore',invalid='ignore')
     from peakachu import trainUtils
-    from scipy.sparse import csr_matrix
     import cooler
-    import random
+
     pathlib.Path(args.output).mkdir(parents=True, exist_ok=True)
     Lib = cooler.Cooler(args.path)
     #resolution = Lib.binsize
     resolution = args.resolution
     coords = trainUtils.parsebed(args.bedpe,lower=2,res=resolution)
+    kde, lower, long_start, long_end = trainUtils.learn_distri_kde(coords)
     # train model per chromosome
     positive_class = {}
     negative_class = {}
@@ -25,22 +25,15 @@ def main(args):
             chromname='chr'+key
         print('collecting from {}'.format(key))
         X = Lib.matrix(balance=args.balance,sparse=True).fetch(key).tocsr() # lower down the memory usage
-        R,C = X.nonzero()
-        validmask = np.isfinite(X.data) # non-nan
-        R,C,data = R[validmask],C[validmask],X.data[validmask]
-        X = csr_matrix((data, (R, C)), shape=X.shape)
-        del data
-        idx = (C-R > 20000//resolution) & (C-R < 160000//resolution)
-        R,C = R[idx],C[idx]
         clist = coords[chromname]
+
         try:
             positive_class[chromname] = np.vstack((f for f in trainUtils.buildmatrix(
                                              X,clist,width=args.width)))
-            neg_coords = [(r,c) for r,c in zip(R,C)]
-            random.shuffle(neg_coords)
-            stop = 9*len(clist)//10
+            neg_coords = trainUtils.negative_generating(X, kde, clist, lower, long_start, long_end)
+            stop = len(clist)
             negative_class[chromname]=np.vstack((f for f in trainUtils.buildmatrix(
-                             X,neg_coords[::5],width=args.width,
+                             X,neg_coords,width=args.width,
                              positive=False,stop=stop)))
         except:
             print(chromname, ' failed to gather fts')
