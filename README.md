@@ -1,65 +1,148 @@
 
 # Introduction
-Hi-C matrices are comprised of read counts of pair-wise loci in a chromosome conformation capture experiment. peakachu is a command line tool for training and applying random forest models which classify Hi-C pixels as anchor loci for DNA loops. Models are trained via a binary classification schema where loci from ChIA-PET experiments are used as a positive class and random loci as a negative class. peakachu is designed to mimic the input, requirements, and syntax of pyHICCUPS and it is encouraged to install both peak callers in the same virtual environment.
 
-## Requirements
-peakachu runs on python3.6 and uses the sklearn, cooler, and scipy packages. It's recommended to use conda to create a new environment like so:
+## What is Peakachu
 
+Peakachu is an acronym that standands for Unveil Hi-C Anchors and Peaks. It takes genome-wide contact data as input and returns coordinates of likely interactions such as chromatin loops. A machine learning framework based on sklearn is employed to generate random forest models trained on example interactions predicted by an arbitrary experiment. For example, loops can be predicted in Hi-C data using models trained with the Hi-C profiles of interactions detected via ChIA-PET. Although Hi-C is the namesake of Peakachu, it is designed to accept any genome-wide contact map including those from Micro-C and DNA SPRITE.
 
-```bash
-conda create -n peak_caller python=3.6 scikit-learn=0.20.2 numpy scipy pandas h5py
-conda install -n peak_caller -c bioconda cooler # if not available, add bioconda channel to your miniconda
-source activate peak_caller
-pip install -i https://test.pypi.org/simple/ peakachu  
-```
+## Installation
 
-Peakachu should now be available within this environment. 
-
-## Example commands
+Peakachu requires Python3 and several scientific packages to run. It is best to set up a conda environment then install from github.
 
 
 ```bash
-# train forests with Hi-C dataset and ChIA-PET peaklist
-peakachu train -p gm12878.cool::10000 -b CTCF_ChIAPET.bed -O out_folder
+conda create -n 3dgenome python=3.6
+source activate 3dgenome
+git clone https://github.com/tariks/peakachu
+cd peakachu
+python setup.py --install
 ```
+
+Peakachu should now be installed as a command-line tool within the new environment. Options for all peakachu commands can be accessed with the -h option.
 
 
 ```bash
-# apply models to Hi-C data per-chromosome
-for model in out_folder/*pkl; do 
-peakachu score_chromosome -p gm12878.cool::10000 -m $i -O out_folder; done
+peakachu -h
 ```
 
-
-```bash
-# apply one model on all chromosomes
-peakachu score_genome -p gm12878.cool::10000 -m $i -O out_folder; done
-```
-
-
-```bash
-# pool enriched regions and call loops to stdout
-for bedfile in out_folder/*bed; do 
-peakachu pool -i $bedfile > ${bedfile}.loops; done
-```
-
-## Interpretation of results
-By default, the called loops are chosen by retaining the pixels with the highest probability scores, up to 2000 per chromosome. The output format is a .bedpe file with the 7th column holding the interaction probability determined by the classifier. Further filtering can be done via awk:
-
-
-```bash
-cat out_folder/*loops > gm12878.loops
-wc -l gm12878.loops
-```
-
-       36512 gm12878.loops
+    usage: peakachu [-h] {train,score_chromosome,score_genome,depth,pool} ...
+    
+    Train Random Forest with Hi-C data and training peaklist.
+    
+    positional arguments:
+      {train,score_chromosome,score_genome,depth,pool}
+        train               Train RandomForest model per chromosome
+        score_chromosome    Calculate interaction probability per pixel for a
+                            chromosome
+        score_genome        Calculate interaction probability per pixel for the
+                            whole genome
+        depth               Print read count of a .cool file
+        pool                Print centroid loci from score_x output
+    
+    optional arguments:
+      -h, --help            show this help message and exit
 
 
 
 ```bash
-awk '{if ($7 > .9) print $0}' gm12878.loops | sort -u > gm12878.filtered.loops
-wc -l gm12878.filtered.loops
+peakachu train -h
 ```
 
-       11329 gm12878.filtered.loops
+    usage: peakachu train [-h] [-p PATH] [-O OUTPUT] [-w WIDTH] [-b BEDPE]
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -p PATH, --path PATH  URI string pointing to a .cool or multi-res .cool
+                            file. Append ::10000 to the filename of a multi-res
+                            .cool to use the 10kb matrix.
+      -O OUTPUT, --output OUTPUT
+                            Folder path to store results.
+      -w WIDTH, --width WIDTH
+                            number of bins added to center of window. default
+                            width=5 corresponds to 11x11 windows
+      -b BEDPE, --bedpe BEDPE
+                            Path to the bedpe file containing pairs of resolutions
+                            corresponding to experimentally detected loops.
 
+
+# Example: predicting loops in GM12878 Hi-C
+
+GM12878 is a commonly studied cell-line based on lymphoblasts from an adult individual. The following example will download a cooler file from a public source, train a series of models using ChIA-PET or HiChIP data, then predict loops using the trained models.
+
+## Data preparation
+
+Peakachu requires the contact map to be a cooler file and any training input to be a text file in bedpe format. Example training data is included in the github repository, consisting of bedpe files prepared from supplementary tables in [Tang et al][https://www.cell.com/cell/fulltext/S0092-8674(15)01504-4] and [Mumbach et al][https://www.ncbi.nlm.nih.gov/pubmed/28945252]. Cooler files may be found at the [4DN data portal][https://data.4dnucleome.org/].
+
+
+```bash
+wget ftp://cooler.csail.mit.edu/coolers/hg19/Rao2014-GM12878-MboI-allreps-filtered.10kb.cool
+```
+
+## Predicting loops in GM12878
+
+It is always a good idea to call the help function immediately before entering a command
+
+
+```bash
+peakachu train -h
+```
+
+    usage: peakachu train [-h] [-p PATH] [-O OUTPUT] [-w WIDTH] [-b BEDPE]
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -p PATH, --path PATH  URI string pointing to a .cool or multi-res .cool
+                            file. Append ::10000 to the filename of a multi-res
+                            .cool to use the 10kb matrix.
+      -O OUTPUT, --output OUTPUT
+                            Folder path to store results.
+      -w WIDTH, --width WIDTH
+                            number of bins added to center of window. default
+                            width=5 corresponds to 11x11 windows
+      -b BEDPE, --bedpe BEDPE
+                            Path to the bedpe file containing pairs of resolutions
+                            corresponding to experimentally detected loops.
+
+
+
+```bash
+peakachu train -p Rao2014-GM12878-MboI-allreps-filtered.10kb.cool -O models -b hg19.mumbach.h3k27ac.hichip.bedpe 
+```
+
+This will train one 23 random forest models, each labeled by a chromosome. Every model was trained on all of the interactions from the bedpe files EXCEPT for the chromosome which it is labeled as. The purpose of this is to allow Peakachu to predict loops from the same map it used for training, without overfitting. To use these models, you may either use the score_chromosome function to predict loops in only one chromosome, or the score_genome function when using a trained model to predict loops in a new contact map.
+
+
+```bash
+peakachu score_chromosome -h
+```
+
+    usage: peakachu score_chromosome [-h] [-p PATH] [-O OUTPUT] [-w WIDTH]
+                                     [-m MODEL] [-l LOWER] [-u UPPER]
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -p PATH, --path PATH  URI string pointing to a .cool or multi-res .cool
+                            file. Append ::10000 to the filename of a multi-res
+                            .cool to use the 10kb matrix.
+      -O OUTPUT, --output OUTPUT
+                            Folder path to store results.
+      -w WIDTH, --width WIDTH
+                            number of bins added to center of window. default
+                            width=5 corresponds to 11x11 windows
+      -m MODEL, --model MODEL
+                            Path to pickled model file.
+      -l LOWER, --lower LOWER
+                            Lower bound of distance between loci in bins (default
+                            2).
+      -u UPPER, --upper UPPER
+                            Lower bound of distance between loci in bins (default
+                            300).
+
+
+
+```bash
+for i in models/*pkl; do peakachu score_chromosome -O scores -m $i; done
+for i in scores/*; do peakachu pool -i $i -t .9 > ${i}.loops.txt; done
+```
+
+The pool function serves to select the most significant non-redundant results from per-pixel probabilities calculated by the score functions. It is recommended to try different probability thresholds to achieve the best sensitivity-specificity tradeoff.
