@@ -3,7 +3,7 @@
 
 ## What is Peakachu
 
-Peakachu is an acronym that standands for Unveil Hi-C Anchors and Peaks. It takes genome-wide contact data as input and returns coordinates of likely interactions such as chromatin loops. A machine learning framework based on sklearn is employed to generate random forest models trained on example interactions predicted by an arbitrary experiment. For example, loops can be predicted in Hi-C data using models trained with the Hi-C profiles of interactions detected via ChIA-PET. Although Hi-C is the namesake of Peakachu, it is designed to accept any genome-wide contact map including those from Micro-C and DNA SPRITE.
+Peakachu is an acronym that standands for **U**nveil **H**i-**C** **A**nchors and **Peak**s. It takes genome-wide contact data as input and returns coordinates of likely interactions such as chromatin loops. A machine learning framework based on sklearn is employed to generate random forest models trained on example interactions predicted by an arbitrary experiment. For example, loops can be predicted in Hi-C data using models trained with the Hi-C profiles of interactions detected via ChIA-PET. Although Hi-C is the namesake of Peakachu, it is designed to accept any genome-wide contact map including those from Micro-C and DNA SPRITE.
 
 ## Installation
 
@@ -11,11 +11,11 @@ Peakachu requires Python3 and several scientific packages to run. It is best to 
 
 
 ```bash
-conda create -n 3dgenome python=3.6
-source activate 3dgenome
+conda create -n Peakachu python=3.6 scikit-learn=0.20.2 numpy scipy pandas h5py
+source activate Peakachu
 git clone https://github.com/tariks/peakachu
 cd peakachu
-python setup.py --install
+python setup.py install
 ```
 
 Peakachu should now be installed as a command-line tool within the new environment. Options for all peakachu commands can be accessed with the -h option.
