@@ -78,10 +78,7 @@ GM12878 is a commonly studied cell-line based on lymphoblasts from an adult indi
 
 ## Data preparation
 
-Peakachu requires the contact map to be a cooler file and any training input to be a text file in bedpe format. Example training data is included in the github repository, consisting of bedpe files prepared from supplementary tables in [Tang et al][1] and [Mumbach et al][2]. Cooler files may be found at the [4DN data portal][3]
-[1]: https://www.cell.com/cell/fulltext/S0092-8674(15)01504-4
-[2]: https://www.ncbi.nlm.nih.gov/pubmed/28945252
-[3]: https://data.4dnucleome.org/
+Peakachu requires the contact map to be a cooler file and any training input to be a text file in bedpe format. Example training data is included in the github repository, consisting of bedpe files prepared from supplementary tables in *[Tang et al](https://www.cell.com/cell/fulltext/S0092-8674(15)01504-4)* and *[Mumbach et al](https://www.ncbi.nlm.nih.gov/pubmed/28945252)*. Cooler files may be found at the *[4DN data portal](https://data.4dnucleome.org/)*.
 
 
 ```bash
