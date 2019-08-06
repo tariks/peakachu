@@ -11,6 +11,9 @@ Peakachu requires Python3 and several scientific packages to run. It is best to 
 
 
 ```bash
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
 conda create -n 3dgenome -c bioconda python=3.6 scikit-learn=0.20.2 cooler
 conda activate 3dgenome
 pip install peakachu
@@ -18,6 +21,9 @@ pip install peakachu
 
 
 ```bash
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
 conda create -n 3dgenome -c bioconda python=3.6 scikit-learn=0.20.2 cooler
 conda activate 3dgenome
 git clone https://github.com/tariks/peakachu
