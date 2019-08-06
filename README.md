@@ -7,13 +7,21 @@ Peakachu is an acronym that standands for Unveil Hi-C Anchors and Peaks. It take
 
 ## Installation
 
-Peakachu requires Python3 and several scientific packages to run. It is best to set up a conda environment then install from github. Copy and paste the commands below:
+Peakachu requires Python3 and several scientific packages to run. It is best to set up a conda environment then install from one of PyPI, github, or conda. Copy and paste one of the command snippets below:
 
 
 ```bash
 conda create -n 3dgenome python=3.6
-conda install -c bioconda cooler
 source activate 3dgenome
+conda install -c bioconda cooler
+pip install peakachu
+```
+
+
+```bash
+conda create -n 3dgenome python=3.6
+source activate 3dgenome
+conda install -c bioconda cooler
 git clone https://github.com/tariks/peakachu
 cd peakachu
 python setup.py --install
