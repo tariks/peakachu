@@ -38,7 +38,7 @@ conda create -n 3dgenome python=3.6 scikit-learn=0.20.2 numpy scipy pandas h5py 
 source activate 3dgenome
 git clone https://github.com/tariks/peakachu
 cd peakachu
-python setup.py --install
+python setup.py install
 ```
 
 Peakachu should now be installed as a command-line tool within the new environment. Options for all peakachu commands can be accessed with the -h option.
