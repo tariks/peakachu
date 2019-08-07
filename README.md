@@ -14,8 +14,8 @@ Peakachu requires Python3 and several scientific packages to run. It is best to 
 conda config --add channels defaults
 conda config --add channels bioconda
 conda config --add channels conda-forge
-conda create -n 3dgenome -c bioconda python=3.6 scikit-learn=0.20.2 cooler
-conda activate 3dgenome
+conda create -n 3dgenome python=3.6 scikit-learn=0.20.2 numpy scipy pandas h5py cooler
+source activate 3dgenome
 pip install peakachu
 ```
 
@@ -24,11 +24,21 @@ pip install peakachu
 conda config --add channels defaults
 conda config --add channels bioconda
 conda config --add channels conda-forge
-conda create -n 3dgenome -c bioconda python=3.6 scikit-learn=0.20.2 cooler
-conda activate 3dgenome
+conda create -n 3dgenome python=3.6 scikit-learn=0.20.2 numpy scipy pandas h5py cooler
+source activate 3dgenome
+conda install peakachu
+```
+
+
+```bash
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda create -n 3dgenome python=3.6 scikit-learn=0.20.2 numpy scipy pandas h5py cooler
+source activate 3dgenome
 git clone https://github.com/tariks/peakachu
 cd peakachu
-python setup.py install
+python setup.py --install
 ```
 
 Peakachu should now be installed as a command-line tool within the new environment. Options for all peakachu commands can be accessed with the -h option.
@@ -84,7 +94,10 @@ GM12878 is a commonly studied cell-line based on lymphoblasts from an adult indi
 
 ## Data preparation
 
-Peakachu requires the contact map to be a cooler file and any training input to be a text file in bedpe format. Example training data is included in the github repository, consisting of bedpe files prepared from supplementary tables in *[Tang et al](https://www.cell.com/cell/fulltext/S0092-8674(15)01504-4)* and *[Mumbach et al](https://www.ncbi.nlm.nih.gov/pubmed/28945252)*. Cooler files may be found at the *[4DN data portal](https://data.4dnucleome.org/)*.
+Peakachu requires the contact map to be a cooler file and any training input to be a text file in bedpe format. Example training data is included in the github repository, consisting of bedpe files prepared from supplementary tables in [Tang et al][1] and [Mumbach et al][2]. Cooler files may be found at the [4DN data portal][3]
+[1]: https://www.cell.com/cell/fulltext/S0092-8674(15)01504-4
+[2]: https://www.ncbi.nlm.nih.gov/pubmed/28945252
+[3]: https://data.4dnucleome.org/
 
 
 ```bash
