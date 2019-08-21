@@ -3,7 +3,7 @@
 
 ## What is Peakachu
 
-Peakachu is an acronym that standands for **U**nveil **H**i-**C** **A**nchors and **Peak**s. It takes genome-wide contact data as input and returns coordinates of likely interactions such as chromatin loops. A machine learning framework based on sklearn is employed to generate random forest models trained on example interactions predicted by an arbitrary experiment. For example, loops can be predicted in Hi-C data using models trained with the Hi-C profiles of interactions detected via ChIA-PET. Although Hi-C is the namesake of Peakachu, it is designed to accept any genome-wide contact map including those from Micro-C and DNA SPRITE.
+Peakachu is an acronym that standands for Unveil Hi-C Anchors and Peaks. It takes genome-wide contact data as input and returns coordinates of likely interactions such as chromatin loops. A machine learning framework based on sklearn is employed to generate random forest models trained on example interactions predicted by an arbitrary experiment. For example, loops can be predicted in Hi-C data using models trained with the Hi-C profiles of interactions detected via ChIA-PET. Although Hi-C is the namesake of Peakachu, it is designed to accept any genome-wide contact map including those from Micro-C and DNA SPRITE.
 
 ## Citation
 
@@ -13,7 +13,6 @@ Tarik J Salameh, Xiaotao Wang, Fan Song, Bo Zhang, Sage M. Wright, Chachrit Khun
 
 Peakachu requires Python3 and several scientific packages to run. It is best to set up a conda environment then install from one of PyPI, github, or conda. Copy and paste one of the command snippets below:
 
-
 ```bash
 conda config --add channels defaults
 conda config --add channels bioconda
@@ -22,7 +21,6 @@ conda create -n 3dgenome python=3.6 scikit-learn=0.20.2 numpy scipy pandas h5py 
 source activate 3dgenome
 pip install peakachu
 ```
-
 
 ```bash
 conda config --add channels defaults
@@ -66,7 +64,11 @@ GM12878 is a commonly studied cell-line based on lymphoblasts from an adult indi
 
 ## Data preparation
 
-Peakachu requires the contact map to be a cooler file and any training input to be a text file in bedpe format. Example training data is included in the github repository, consisting of bedpe files prepared from supplementary tables in *[Tang et al](https://www.cell.com/cell/fulltext/S0092-8674(15)01504-4)* and *[Mumbach et al](https://www.ncbi.nlm.nih.gov/pubmed/28945252)*. Cooler files may be found at the *[4DN data portal](https://data.4dnucleome.org/)*.
+Peakachu requires the contact map to be a cooler file and any training input to be a text file in bedpe format. Example training data is included in the github repository, consisting of bedpe files prepared from supplementary tables in [Tang et al][1] and [Mumbach et al][2]. Cooler files may be found at the [4DN data portal][3]
+[1]: https://www.cell.com/cell/fulltext/S0092-8674(15)01504-4
+[2]: https://www.ncbi.nlm.nih.gov/pubmed/28945252
+[3]: https://data.4dnucleome.org/
+
 
 ```bash
 wget ftp://cooler.csail.mit.edu/coolers/hg19/Rao2014-GM12878-MboI-allreps-filtered.10kb.cool
