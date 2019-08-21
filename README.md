@@ -7,12 +7,25 @@ Peakachu is an acronym that standands for **U**nveil **H**i-**C** **A**nchors an
 
 ## Installation
 
-Peakachu requires Python3 and several scientific packages to run. It is best to set up a conda environment then install from github.
+Peakachu requires Python3 and several scientific packages to run. It is best to set up a conda environment then install from one of PyPI, github, or conda. Copy and paste one of the command snippets below:
 
 
 ```bash
-conda create -n Peakachu python=3.6 scikit-learn=0.20.2 numpy scipy pandas h5py
-source activate Peakachu
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda create -n 3dgenome python=3.6 scikit-learn=0.20.2 numpy scipy pandas h5py cooler
+source activate 3dgenome
+pip install peakachu
+```
+
+
+```bash
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda create -n 3dgenome python=3.6 scikit-learn=0.20.2 numpy scipy pandas h5py cooler
+source activate 3dgenome
 git clone https://github.com/tariks/peakachu
 cd peakachu
 python setup.py install
