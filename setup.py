@@ -26,7 +26,7 @@ setuptools.setup(
     author = peakachu.__author__,
     author_email = 'tariksalameh@gmail.com',
     url = 'https://github.com/tariks/peakachu/',
-    description = 'Identify DNA loops from Hi-C data.',
+    description = 'Identify DNA loops from genome-wide contact matrix.',
     keywords = 'Hi-C interaction contact loop peak cooler',
     packages = setuptools.find_packages(),
     scripts = glob.glob('scripts/*'),
