@@ -33,11 +33,11 @@ def getargs():
         i.add_argument('-r', '--resolution',
                          help = 'Resolution in bp, default 10000',
                          type = int, default=10000)
-    for i in subs[1:-1]:
-        i.add_argument('--balance',action='store_true')
+    for i in subs[:-1]:
         i.add_argument('-p', '--path',
                          help = 'URI string pointing to a .cool or multi-res .cool file. Append ::10000 to the filename of a multi-res .cool to use the 10kb matrix.')
     for i in subs[1:-1]:
+        i.add_argument('--balance',action='store_true')
         i.add_argument('-O', '--output', help='Folder path to store results.')
         i.add_argument('-w', '--width', type = int, default=5,
                         help = '''number of bins added to center of window. 
