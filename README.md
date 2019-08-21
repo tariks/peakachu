@@ -61,8 +61,8 @@ We've already trained Peakachu at various sequencing depths of Hi-C data. To pre
 download an appropriate model according to the table below:
 
 | Total intra reads    | CTCF Model Link  |  H3K27ac Model Link  |
-|----------------------|------------------|----------------------|
-|    > 2 billion       |  *[total](https://drive.google.com/file/d/1IIVgQ8-dXelcdBSOfQcCmAM9Tbf3WPf3/view?usp=sharing)*            |
+|----------------------|------------------------------------------------------------------------------|----------------------|
+|    > 2 billion       |    *[total](https://drive.google.com/file/d/1IIVgQ8-dXelcdBSOfQcCmAM9Tbf3WPf3/view?usp=sharing)*  |           |
 |   1.9 - 2 billion    |              |
 |   1.7 - 1.9 billion  |              |
 |   1.5 - 1.7 billion  |              |
