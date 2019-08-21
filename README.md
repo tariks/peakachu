@@ -155,16 +155,16 @@ download an appropriate model below:
 
 |   Total intra reads  |                                 CTCF Model Link                                 |                                     H3K27ac Model Link                                |
 |----------------------|---------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
-|    > 2 billion       | [CTCF total](https://www.dropbox.com/s/enyg2m7ebj8mxsv/down100.ctcf.pkl?dl=0)   | *[H3K27ac total](https://www.dropbox.com/s/yasl5hu0v510k2v/down100.h3k27ac.pkl?dl=0)* |
-|   1.9 - 2 billion    | *[CTCF 90%](https://www.dropbox.com/s/g12hy9f28igh0ng/down90.ctcf.pkl?dl=0)*    | *[H3K27ac 90%](https://www.dropbox.com/s/kdbv52eeilkzqfr/down90.h3k27ac.pkl?dl=0)*    |
-|   1.7 - 1.9 billion  | *[CTCF 80%](https://www.dropbox.com/s/n2m4jxxojh0u5ay/down80.ctcf.pkl?dl=0)*    | *[H3K27ac 80%](https://www.dropbox.com/s/45ekayzigeyuown/down80.h3k27ac.pkl?dl=0)*    |
-|   1.5 - 1.7 billion  | *[CTCF 70%](https://www.dropbox.com/s/h9vm8z0uysti8xm/down70.ctcf.pkl?dl=0)*    | *[H3K27ac 70%](https://www.dropbox.com/s/mrhe0uayv402vfk/down70.h3k27ac.pkl?dl=0)*    |
-|   1.3 - 1.5 billion  | *[CTCF 60%](https://www.dropbox.com/s/cfkfem4w8dhhgwm/down60.ctcf.pkl?dl=0)*    | *[H3K27ac 60%](https://www.dropbox.com/s/0f9xv6ljjlcwnsv/down60.h3k27ac.pkl?dl=0)*    |
-|   1.1 - 1.3 billion  | *[CTCF 50%](https://www.dropbox.com/s/c0b6axxb16p2nd7/down50.ctcf.pkl?dl=0)*    | *[H3K27ac 50%](https://www.dropbox.com/s/3w4befpvu7c7cqe/down50.h3k27ac.pkl?dl=0)*    |
-|   0.9 - 1.1 billion  | *[CTCF 40%](https://www.dropbox.com/s/8lvcdjenyoc8ggy/down40.ctcf.pkl?dl=0)*    | *[H3K27ac 40%](https://www.dropbox.com/s/xwlk864nkoafzsy/down40.h3k27ac.pkl?dl=0)*    |
-|   0.7 - 0.9 billion  | *[CTCF 30%](https://www.dropbox.com/s/f1383jpzj3addi4/down30.ctcf.pkl?dl=0)*    | *[H3K27ac 30%](https://www.dropbox.com/s/dyvtyqvu3wpq3a5/down30.h3k27ac.pkl?dl=0)*    |
-|   0.4 - 0.7 billion  | *[CTCF 20%](https://www.dropbox.com/s/a5nwa1xlg22ud24/down20.ctcf.pkl?dl=0)*    | *[H3K27ac 20%](https://www.dropbox.com/s/qjm84cpw3uzlidp/down20.h3k27ac.pkl?dl=0)*    |
-|    < 400 million     | *[CTCF 10%](https://www.dropbox.com/s/cqi0ws8een9ad4t/down10.ctcf.pkl?dl=0)*    | *[H3K27ac 10%](https://www.dropbox.com/s/q8mlwn4mz6rnumr/down10.h3k27ac.pkl?dl=0)*    |
+|    > 2 billion       | [CTCF total](https://www.dropbox.com/s/enyg2m7ebj8mxsv/down100.ctcf.pkl?dl=0)   | [H3K27ac total](https://www.dropbox.com/s/yasl5hu0v510k2v/down100.h3k27ac.pkl?dl=0)   |
+|   1.9 - 2 billion    | [CTCF 90%](https://www.dropbox.com/s/g12hy9f28igh0ng/down90.ctcf.pkl?dl=0)      | [H3K27ac 90%](https://www.dropbox.com/s/kdbv52eeilkzqfr/down90.h3k27ac.pkl?dl=0)      |
+|   1.7 - 1.9 billion  | [CTCF 80%](https://www.dropbox.com/s/n2m4jxxojh0u5ay/down80.ctcf.pkl?dl=0)      | [H3K27ac 80%](https://www.dropbox.com/s/45ekayzigeyuown/down80.h3k27ac.pkl?dl=0)      |
+|   1.5 - 1.7 billion  | [CTCF 70%](https://www.dropbox.com/s/h9vm8z0uysti8xm/down70.ctcf.pkl?dl=0)      | [H3K27ac 70%](https://www.dropbox.com/s/mrhe0uayv402vfk/down70.h3k27ac.pkl?dl=0)      |
+|   1.3 - 1.5 billion  | [CTCF 60%](https://www.dropbox.com/s/cfkfem4w8dhhgwm/down60.ctcf.pkl?dl=0)      | [H3K27ac 60%](https://www.dropbox.com/s/0f9xv6ljjlcwnsv/down60.h3k27ac.pkl?dl=0)      |
+|   1.1 - 1.3 billion  | [CTCF 50%](https://www.dropbox.com/s/c0b6axxb16p2nd7/down50.ctcf.pkl?dl=0)      | [H3K27ac 50%](https://www.dropbox.com/s/3w4befpvu7c7cqe/down50.h3k27ac.pkl?dl=0)      |
+|   0.9 - 1.1 billion  | [CTCF 40%](https://www.dropbox.com/s/8lvcdjenyoc8ggy/down40.ctcf.pkl?dl=0)      | [H3K27ac 40%](https://www.dropbox.com/s/xwlk864nkoafzsy/down40.h3k27ac.pkl?dl=0)      |
+|   0.7 - 0.9 billion  | [CTCF 30%](https://www.dropbox.com/s/f1383jpzj3addi4/down30.ctcf.pkl?dl=0)      | [H3K27ac 30%](https://www.dropbox.com/s/dyvtyqvu3wpq3a5/down30.h3k27ac.pkl?dl=0)      |
+|   0.4 - 0.7 billion  | [CTCF 20%](https://www.dropbox.com/s/a5nwa1xlg22ud24/down20.ctcf.pkl?dl=0)      | [H3K27ac 20%](https://www.dropbox.com/s/qjm84cpw3uzlidp/down20.h3k27ac.pkl?dl=0)      |
+|    < 400 million     | [CTCF 10%](https://www.dropbox.com/s/cqi0ws8een9ad4t/down10.ctcf.pkl?dl=0)      | [H3K27ac 10%](https://www.dropbox.com/s/q8mlwn4mz6rnumr/down10.h3k27ac.pkl?dl=0)      |
 
 To make it clear, let's download another Hi-C data from 4DN: https://data.4dnucleome.org/files-processed/4DNFI5IHU27G/@@download/4DNFI5IHU27G.mcool. Peakachu provides a handy function `peakachu depth` to extract the total number of intra-chromosomal pairs from *[cool URI](https://cooler.readthedocs.io/en/latest/concepts.html#uri-string)*:
 
