@@ -54,28 +54,17 @@ peakachu -h
     
     optional arguments:
       -h, --help            show this help message and exit
+      
+# Using Peakachu as a standard loop caller
 
+We've already trained Peakachu at various sequencing depths of Hi-C data. To predict loops in your Hi-C data, just
+download an appropriate model according to the table below:
 
-
-```bash
-peakachu train -h
-```
-
-    usage: peakachu train [-h] [-p PATH] [-O OUTPUT] [-w WIDTH] [-b BEDPE]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
-      -p PATH, --path PATH  URI string pointing to a .cool or multi-res .cool
-                            file. Append ::10000 to the filename of a multi-res
-                            .cool to use the 10kb matrix.
-      -O OUTPUT, --output OUTPUT
-                            Folder path to store results.
-      -w WIDTH, --width WIDTH
-                            number of bins added to center of window. default
-                            width=5 corresponds to 11x11 windows
-      -b BEDPE, --bedpe BEDPE
-                            Path to the bedpe file containing pairs of resolutions
-                            corresponding to experimentally detected loops.
+| Total intra reads  | Model link   |
+|--------------------|--------------|
+| > 2 billion        |              |
+| 1.9 - 2 billion    |              |
+|                    |              |
 
 
 # Example: predicting loops in GM12878 Hi-C
