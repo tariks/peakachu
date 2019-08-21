@@ -155,7 +155,7 @@ download an appropriate model below:
 
 |   Total intra reads  |                                 CTCF Model Link                                 |                                     H3K27ac Model Link                                |
 |----------------------|---------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
-|    > 2 billion       | *[CTCF total](https://www.dropbox.com/s/enyg2m7ebj8mxsv/down100.ctcf.pkl?dl=0)* | *[H3K27ac total](https://www.dropbox.com/s/yasl5hu0v510k2v/down100.h3k27ac.pkl?dl=0)* |
+|    > 2 billion       | [CTCF total](https://www.dropbox.com/s/enyg2m7ebj8mxsv/down100.ctcf.pkl?dl=0)   | *[H3K27ac total](https://www.dropbox.com/s/yasl5hu0v510k2v/down100.h3k27ac.pkl?dl=0)* |
 |   1.9 - 2 billion    | *[CTCF 90%](https://www.dropbox.com/s/g12hy9f28igh0ng/down90.ctcf.pkl?dl=0)*    | *[H3K27ac 90%](https://www.dropbox.com/s/kdbv52eeilkzqfr/down90.h3k27ac.pkl?dl=0)*    |
 |   1.7 - 1.9 billion  | *[CTCF 80%](https://www.dropbox.com/s/n2m4jxxojh0u5ay/down80.ctcf.pkl?dl=0)*    | *[H3K27ac 80%](https://www.dropbox.com/s/45ekayzigeyuown/down80.h3k27ac.pkl?dl=0)*    |
 |   1.5 - 1.7 billion  | *[CTCF 70%](https://www.dropbox.com/s/h9vm8z0uysti8xm/down70.ctcf.pkl?dl=0)*    | *[H3K27ac 70%](https://www.dropbox.com/s/mrhe0uayv402vfk/down70.h3k27ac.pkl?dl=0)*    |
