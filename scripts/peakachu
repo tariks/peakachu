@@ -17,7 +17,7 @@ def getargs():
             help='''Calculate interaction probability per pixel for the whole genome''')
     subgen.set_defaults(func=score_genome.main)
     subdepth=subparsers.add_parser('depth',
-            help='''Print read count of a .cool file''')
+            help='''Print intra-chromosomal read count of a .cool file''')
     subdepth.set_defaults(func=calculate_depth.main)
     subpool = subparsers.add_parser('pool',
             help='''Print centroid loci from score_x output''')
@@ -29,11 +29,11 @@ def getargs():
     #subpool.add_argument('-u','--upper',
     #                     help = 'Upper bound of report in bp (300000)',
     #                     type = int, default=300000)
-    for i in subs:
+    for i in subs[1:]:
         i.add_argument('-r', '--resolution',
                          help = 'Resolution in bp, default 10000',
                          type = int, default=10000)
-    for i in subs[:-1]:
+    for i in subs[1:-1]:
         i.add_argument('--balance',action='store_true')
         i.add_argument('-p', '--path',
                          help = 'URI string pointing to a .cool or multi-res .cool file. Append ::10000 to the filename of a multi-res .cool to use the 10kb matrix.')
