@@ -60,11 +60,18 @@ peakachu -h
 We've already trained Peakachu at various sequencing depths of Hi-C data. To predict loops in your Hi-C data, just
 download an appropriate model according to the table below:
 
-| Total intra reads  | Model link   |
-|--------------------|--------------|
-| > 2 billion        |              |
-| 1.9 - 2 billion    |              |
-|                    |              |
+| Total intra reads    | CTCF Model Link  |  H3K27ac Model Link  |
+|----------------------|------------------|----------------------|
+|    > 2 billion       |  *[total](https://drive.google.com/file/d/1IIVgQ8-dXelcdBSOfQcCmAM9Tbf3WPf3/view?usp=sharing)*            |
+|   1.9 - 2 billion    |              |
+|   1.7 - 1.9 billion  |              |
+|   1.5 - 1.7 billion  |              |
+|   1.3 - 1.5 billion  |              |
+|   1.1 - 1.3 billion  |              |
+|   0.9 - 1.1 billion  |              |
+|   0.7 - 0.9 billion  |              |
+|   0.4 - 0.7 billion  |              |
+|    < 400 million     |              |
 
 
 # Example: predicting loops in GM12878 Hi-C
