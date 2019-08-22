@@ -10,9 +10,14 @@ np.seterr(divide='ignore',invalid='ignore')
 
 p=sys.argv[1]
 loops = sys.argv[2]
-
-import cooler
-Lib = cooler.Cooler(p)
+if p[-4:]=='.hic':
+    hic=True
+else:
+    hic=False
+    
+if not hic:
+    import cooler
+    Lib = cooler.Cooler(p)
 resolution = 10000
 x=pd.read_table(loops,index_col=0,usecols=[0,1,4])
 chroms = list(set(x.index))
@@ -23,7 +28,10 @@ for k in chroms:
     X=X.astype(int)
     X//=10000
     r,c = X[:,0],X[:,1]
-    X = Lib.matrix(balance=True,sparse=False).fetch(k.split('chr')[1])
+    if not hic:
+        X = Lib.matrix(balance=True,sparse=False).fetch(k.split('chr')[1])
+    else:
+        X = straw.straw('NONE', p, k.lstrip('chr'),k.lstrip('chr'),'BP',resolution)
     np.nan_to_num(X,copy=False)
     for i in range(r.size):
         try:

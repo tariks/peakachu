@@ -7,24 +7,35 @@ def main(args):
     import numpy as np
     np.seterr(divide='ignore',invalid='ignore')
     from peakachu import trainUtils
-    import cooler
-
     pathlib.Path(args.output).mkdir(parents=True, exist_ok=True)
-    Lib = cooler.Cooler(args.path)
-    #resolution = Lib.binsize
-    resolution = args.resolution
-    coords = trainUtils.parsebed(args.bedpe,lower=2,res=resolution)
+    if args.path[-4:]=='.hic':
+        hic=True
+    else:
+        hic=False
+    coords = trainUtils.parsebed(args.bedpe,lower=2,res=args.resolution)
     kde, lower, long_start, long_end = trainUtils.learn_distri_kde(coords)
+    if not hic:
+        import cooler
+        Lib = cooler.Cooler(args.path)
+        chromosomes=Lib.chromnames[:]
+    else:
+        import straw
+        chromosomes=[str(i) for i in range(1,23)]+['X']
     # train model per chromosome
     positive_class = {}
     negative_class = {}
-    for key in Lib.chromnames[:]:
+    for key in chromosomes:
         if key.startswith('chr'):
             chromname=key
         else:
             chromname='chr'+key
         print('collecting from {}'.format(key))
-        X = Lib.matrix(balance=args.balance,sparse=True).fetch(key).tocsr() # lower down the memory usage
+        if not hic:
+            X = Lib.matrix(balance=args.balance,sparse=True).fetch(key).tocsr() # lower down the memory usage
+        elif args.balance:
+            X = straw.straw('KR',args.path,key,key,'BP',args.resolution)
+        else:
+            X = straw.straw('NONE',args.path,key,key,'BP',args.resolution)
         clist = coords[chromname]
 
         try:
@@ -38,7 +49,7 @@ def main(args):
         except:
             print(chromname, ' failed to gather fts')
 
-    for key in Lib.chromnames[:]:
+    for key in chromosomes:
         if key.startswith('chr'):
             chromname=key
         else:
