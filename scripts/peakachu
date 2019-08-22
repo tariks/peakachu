@@ -17,7 +17,7 @@ def getargs():
             help='''Calculate interaction probability per pixel for the whole genome''')
     subgen.set_defaults(func=score_genome.main)
     subdepth=subparsers.add_parser('depth',
-            help='''Print intra-chromosomal read count of a .cool file''')
+            help='''Print total intra-chromosomal read count''')
     subdepth.set_defaults(func=calculate_depth.main)
     subpool = subparsers.add_parser('pool',
             help='''Print centroid loci from score_x output''')
@@ -35,25 +35,24 @@ def getargs():
                          type = int, default=10000)
     for i in subs[:-1]:
         i.add_argument('-p', '--path',
-                         help = 'URI string pointing to a .cool or multi-res .cool file, or a .hic file.')
+                         help = 'Path to a .cool URI string or a .hic file.')
     for i in subs[1:-1]:
-        i.add_argument('--balance',action='store_true')
+        i.add_argument('--balance',action='store_true', help='Whether or not using the ICE/KR-balanced matrix.')
         i.add_argument('-O', '--output', help='Folder path to store results.')
         i.add_argument('-w', '--width', type = int, default=5,
-                        help = '''number of bins added to center of window. 
+                        help = '''Number of bins added to center of window. 
                         default width=5 corresponds to 11x11 windows''')
     for i in subs[2:-1]:
         i.add_argument('-m', '--model', type = str, help = '''Path to pickled model file.''')
         i.add_argument('-l', '--lower', type = int, default=2, help = '''Lower bound of distance between loci in bins (default 2).''')
-        i.add_argument('-u', '--upper', type = int, default=300, help = '''Lower bound of distance between loci in bins (default 300).''')
+        i.add_argument('-u', '--upper', type = int, default=300, help = '''Upper bound of distance between loci in bins (default 300).''')
     subpool.add_argument('-i', '--infile',
                         help = '''Path to the bedpe file containing model output''')
 
     subpool.add_argument('-t', '--threshold', type = float, default = .9,
                         help = 'Probability threshold applied before peak calling, default .9')
     subtrain.add_argument('-b', '--bedpe',
-                        help = '''Path to the bedpe file containing pairs of resolutions
-                               corresponding to experimentally detected loops.''')
+                        help = '''Path to the bedpe file containing positive training set.''')
    
     ## Parse the command-line arguments
     commands = sys.argv[1:]
@@ -72,9 +71,6 @@ def run():
     if commands[0] not in ['-h','--help']:
         args.func(args)
         
-
-
-
 
 if __name__ == '__main__':
     run()
