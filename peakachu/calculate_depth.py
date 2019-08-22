@@ -1,11 +1,12 @@
-import argparse, sys
-import numpy as np
-from scipy import sparse
-from peakachu import utils
-
-np.seterr(divide='ignore',invalid='ignore')
 
 def main(args):
+
+    import argparse, sys
+    import numpy as np
+    from scipy import sparse
+    from peakachu import utils
+
+    np.seterr(divide='ignore',invalid='ignore')
     
     check = utils.read_hic_header(args.path) # more robust to check if a file is .hic
     if check is None:

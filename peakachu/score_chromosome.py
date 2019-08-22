@@ -1,12 +1,13 @@
 #!/usr/bin/env python
-import argparse, gc, pathlib
-import numpy as np
-from sklearn.externals import joblib
-from peakachu import scoreUtils, utils
-
-np.seterr(divide='ignore',invalid='ignore')
 
 def main(args):
+
+    import argparse, gc, pathlib
+    import numpy as np
+    from sklearn.externals import joblib
+    from peakachu import scoreUtils, utils
+
+    np.seterr(divide='ignore',invalid='ignore')
     
     pathlib.Path(args.output).mkdir(parents=True, exist_ok=True) 
 

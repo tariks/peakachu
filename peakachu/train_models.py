@@ -1,12 +1,13 @@
 #!/usr/bin/env python
-from sklearn.externals import joblib
-import gc, pathlib
-import numpy as np
-from peakachu import trainUtils, utils
-
-np.seterr(divide='ignore',invalid='ignore')
 
 def main(args):
+
+    from sklearn.externals import joblib
+    import gc, pathlib
+    import numpy as np
+    from peakachu import trainUtils, utils
+
+    np.seterr(divide='ignore',invalid='ignore')
     
     pathlib.Path(args.output).mkdir(parents=True, exist_ok=True)
 
