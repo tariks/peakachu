@@ -92,15 +92,16 @@ def parsebed(chiafile, res=10000, lower=1, upper=5000000):
     upper = upper // res
     with open(chiafile) as o:
         for line in o:
-            s = line.split()
+            s = line.rstrip().split()
             a, b = float(s[1]), float(s[4])
             a, b = int(a), int(b)
             if a > b:
                 a, b = b, a
             a //= res
             b //= res
-            if (b-a > lower) and (b-a < upper) and 'Y' not in s[0] and 'X' not in s[0] and 'M' not in s[0]:
-                coords[s[0]].add((a, b))
+            if (b-a > lower) and (b-a < upper) and 'M' not in s[0]: # all chromosomes including X and Y
+                chrom = 'chr' + s[0].lstrip('chr') # always has prefix "chr", avoid potential bugs
+                coords[chrom].add((a, b))
     
     for c in coords:
         coords[c] = sorted(coords[c])

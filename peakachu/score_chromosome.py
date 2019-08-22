@@ -1,50 +1,49 @@
 #!/usr/bin/env python
-import argparse
+import argparse, gc, pathlib
+import numpy as np
 from sklearn.externals import joblib
-import gc
-import pathlib
+from peakachu import scoreUtils, utils
+
+np.seterr(divide='ignore',invalid='ignore')
 
 def main(args):
-    import numpy as np
-    np.seterr(divide='ignore',invalid='ignore')
-    from peakachu import scoreUtils
+    
     pathlib.Path(args.output).mkdir(parents=True, exist_ok=True) 
-    cikada=args.model
-    cikada=cikada.split('.pk')[0]
-    cikada='ch'+cikada.split('ch')[-1]
-
 
     model = joblib.load(args.model)
 
-    if args.path[4:]=='.hic':
-        hic=True
-    else:
+    hic_info = utils.read_hic_header(args.path) # more robust to check if a file is .hic
+    if hic_info is None:
         hic=False
+    else:
+        hic=True
+
     if not hic:
         import cooler
         Lib = cooler.Cooler(args.path)
-        chromosomes=Lib.chromnames[:]
+        chromosomes = Lib.chromnames[:]
     else:
-        import straw
-        chromosomes=[str(i) for i in range(1,23)]+['X']
-    if cikada in chromosomes:
-        ccname=cikada
-    else:
-        ccname=cikada.split('hr')[1]
+        chromosomes = list(hic_info['chromsizes'])
+    
+    pre = utils.find_chrom_pre(chromosomes)
+    ccname = pre + args.model.split('.pk')[0].lstrip('chr') # ccname is consistent with chromosome labels in .hic / .cool
+    cikada = 'chr' + ccname.lstrip('chr') # cikada always has prefix "chr"
+    
     if not hic:
         X = scoreUtils.Chromosome(Lib.matrix(balance=args.balance, sparse=True).fetch(ccname).tocsr(),
                                 model=model,
                                 cname=cikada,lower=args.lower,
                                 upper=args.upper,res=args.resolution,
                                 width=args.width)
-    elif args.balance:
-        X = scoreUtils.Chromosome(straw.straw('KR',args.path,ccname,ccname,'BP',args.resolution),
+    else:
+        if args.balance:
+            X = scoreUtils.Chromosome(utils.csr_contact_matrix('KR',args.path,ccname,ccname,'BP',args.resolution),
                                 model=model,
                                 cname=cikada,lower=args.lower,
                                 upper=args.upper,res=args.resolution,
                                 width=args.width)
-    else:
-        X = scoreUtils.Chromosome(straw.straw('NONE',args.path,ccname,ccname,'BP',args.resolution),
+        else:
+            X = scoreUtils.Chromosome(utils.csr_contact_matrix('NONE',args.path,ccname,ccname,'BP',args.resolution),
                                 model=model,
                                 cname=cikada,lower=args.lower,
                                 upper=args.upper,res=args.resolution,

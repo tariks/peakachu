@@ -1,30 +1,32 @@
 #!/usr/bin/env python
-import argparse
+import argparse, gc, pathlib
 from sklearn.externals import joblib
-import gc
-import pathlib
+import numpy as np
+from peakachu import scoreUtils, utils
+
+np.seterr(divide='ignore',invalid='ignore')
 
 def main(args):
-    import numpy as np
-    np.seterr(divide='ignore',invalid='ignore')
-    from peakachu import scoreUtils
-    pathlib.Path(args.output).mkdir(parents=True, exist_ok=True) 
+    
+    pathlib.Path(args.output).mkdir(parents=True, exist_ok=True)
 
-    if args.path[-4:] == '.hic':
-        hic=True
+    model = joblib.load(args.model)
+
+    hic_info = utils.read_hic_header(args.path) # more robust to check if a file is .hic
+    if hic_info is None:
+        hic=False
         import cooler
         Lib = cooler.Cooler(args.path)
-        chromosomes=Lib.chromnames[:]
-        nam = args.path.split('.cool')[0]
+        chromosomes = Lib.chromnames[:]
+        #nam = args.path.split('.cool')[0]
     else:
-        hic=False
-        import straw
-        chromosomes=[str(i) for i in range(1,23)]+['X']
-        nam = args.path.split('.hic')[0]
-    nam = nam.split('/')[-1]
-    model = joblib.load(args.model)
+        hic=True
+        chromosomes = list(hic_info['chromsizes'])
+        #nam = args.path.split('.hic')[0]
+    #nam = nam.split('/')[-1]
+
     for key in chromosomes:
-        if key.startswith('c'):
+        if key.startswith('chr'):
             cname=key
         else:
             cname='chr'+key
@@ -34,14 +36,15 @@ def main(args):
                                 cname=cname,lower=args.lower,
                                 upper=args.upper,res=args.resolution,
                                 width=args.width)
-        elif args.balance:
-            X = scoreUtils.Chromosome(straw.straw('KR',args.path,cname,cname,'BP',args.resolution),
+        else:
+            if args.balance:
+                X = scoreUtils.Chromosome(utils.csr_contact_matrix('KR',args.path,cname,cname,'BP',args.resolution),
                                 model=model,
                                 cname=cname,lower=args.lower,
                                 upper=args.upper,res=args.resolution,
                                 width=args.width)
-        else:
-            X = scoreUtils.Chromosome(straw.straw('NONE',args.path,cname,cname,'BP',args.resolution),
+            else:
+                X = scoreUtils.Chromosome(utils.csr_contact_matrix('NONE',args.path,cname,cname,'BP',args.resolution),
                                 model=model,
                                 cname=cname,lower=args.lower,
                                 upper=args.upper,res=args.resolution,

@@ -1,15 +1,17 @@
-#!/usr/bin/env python
-import pathlib
+import argparse, sys
+import numpy as np
+from scipy import sparse
+from peakachu import utils
+
+np.seterr(divide='ignore',invalid='ignore')
 
 def main(args):
-    import argparse, sys
-    import numpy as np
-    from scipy import sparse
-    np.seterr(divide='ignore',invalid='ignore')
-    if args.path[-3:]=='.hic':
-        hic=True
+    
+    check = utils.read_hic_header(args.path) # more robust to check if a file is .hic
+    if check is None:
+        hic = False
     else:
-        hic=False
+        hic = True
 
     totals=0
     if not hic:
@@ -21,10 +23,10 @@ def main(args):
             totals += int(intra.sum())
     else:
         import straw
-        chromosomes = list(range(1,23))+['X'] 
-        for k in chromosomes:
-            intra = straw.straw('NONE',args.path,k,k,'BP',10000)
-            totals += int(intra.sum())
+        hic_info = check
+        for k in hic_info['chromsizes']:
+            intra = straw.straw('NONE', args.path, k, k, 'BP', 10000)
+            totals += sum(intra[2]) # intra is a list of list x, y, v
 
     print(totals)
 
