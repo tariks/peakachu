@@ -1,8 +1,7 @@
 
 # Read information from the hic header
 
-import struct
-import io
+import struct, io, os
 
 def csr_contact_matrix(norm, hicfile, chr1loc, chr2loc, unit,
     binsize, is_synapse=False):
@@ -44,6 +43,9 @@ def readcstr(f):
             buf = buf + b
 
 def read_hic_header(hicfile):
+
+    if not os.path.exists(hicfile):
+        return None # probably a cool URI
 
     req = open(hicfile, 'rb')
     magic_string = struct.unpack('<3s', req.read(3))[0]
