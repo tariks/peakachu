@@ -10,6 +10,7 @@ def csr_contact_matrix(norm, hicfile, chr1loc, chr2loc, unit,
     '''
 
     from scipy.sparse import csr_matrix
+    import numpy as np
     import straw
 
     tri_list = straw.straw(norm, hicfile, chr1loc, chr2loc, unit, binsize, is_synapse)
@@ -18,6 +19,13 @@ def csr_contact_matrix(norm, hicfile, chr1loc, chr2loc, unit,
     value = tri_list[2]
     N = max(col) + 1
 
+    # re-scale KR matrix to ICE-matrix range
+    M = csr_matrix((value, (row, col)), shape=(N, N))
+    margs = np.array(M.sum(axis=0)).ravel() + np.array(M.sum(axis=1)).ravel() - M.diagonal(0)
+    margs[np.isnan(margs)] = 0
+    scale = margs[margs!=0].mean()
+    row, col = M.nonzero()
+    value = M.data / scale
     M = csr_matrix((value, (row, col)), shape=(N, N))
 
     return M
