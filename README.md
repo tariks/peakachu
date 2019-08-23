@@ -138,7 +138,8 @@ for i in models/*pkl; do peakachu score_chromosome -p Rao2014-GM12878-MboI-allre
 for i in scores/*; do peakachu pool -i $i -t .9 > ${i}.loops.txt; done
 ```
 
-The pool function serves to select the most significant non-redundant results from per-pixel probabilities calculated by the score functions. It is recommended to try different probability thresholds to achieve the best sensitivity-specificity tradeoff.
+The pool function serves to select the most significant non-redundant results from per-pixel probabilities calculated by the score functions. It is recommended to try different probability thresholds to achieve the best sensitivity-specificity tradeoff. The output is a standard bedpe file with the 7th and final column containing the predicted probability from the sklearn model, to support further filtering. The results can be visualized in juicer by loading as 2D annotations. Here is an example screenshot of predicted GM12878 loops in juicer:
+![Predicted loops from model trained on H3K27ac HiChIP interactions](https://github.com/tariks/peakachu/blob/master/example/gm12878-h3k27ac-loops.png)
 
 # Using Peakachu as a standard loop caller
 
