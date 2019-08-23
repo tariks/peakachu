@@ -158,7 +158,7 @@ Models for predicting loops in Hi-C have already been prepared using CTCF ChIA-P
 |   0.4 - 0.7 billion  | [CTCF 20%](https://www.dropbox.com/s/a5nwa1xlg22ud24/down20.ctcf.pkl?dl=0)      | [H3K27ac 20%](https://www.dropbox.com/s/qjm84cpw3uzlidp/down20.h3k27ac.pkl?dl=0)      |
 |    < 400 million     | [CTCF 10%](https://www.dropbox.com/s/cqi0ws8een9ad4t/down10.ctcf.pkl?dl=0)      | [H3K27ac 10%](https://www.dropbox.com/s/q8mlwn4mz6rnumr/down10.h3k27ac.pkl?dl=0)      |
 
-To make it clear, let's download another Hi-C dataset from 4DN: https://data.4dnucleome.org/files-processed/4DNFI5IHU27G/@@download/4DNFI5IHU27G.mcool. Peakachu provides a handy function `peakachu depth` to extract the total number of intra-chromosomal pairs from *[cool URI](https://cooler.readthedocs.io/en/latest/concepts.html#uri-  string)*:
+To make it clear, let's download another Hi-C dataset from 4DN: https://data.4dnucleome.org/files-processed/4DNFI5IHU27G/@@download/4DNFI5IHU27G.mcool. Peakachu provides a handy function `peakachu depth` to extract the total number of intra-chromosomal pairs from *[cool URI](https://cooler.readthedocs.io/en/latest/concepts.html#uri-string)*:
 
 
 ```bash
