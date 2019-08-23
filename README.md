@@ -174,3 +174,5 @@ According to the table, for ~600 million intra-reads, we recommend using the 20%
 peakachu score_genome -r 10000 --balance -p 4DNFI5IHU27G.mcool:resolutions/10000 -O scores -m down20.ctcf.pkl
 for i in scores/*; do peakachu pool -i $i -t .9 > ${i}.loops.txt; done
 ```
+# Not just Hi-C
+Peakachu has been tested on Hi-C, Micrco-C, and DNA SPRITE contact maps with good results. For training sets, ChIA-PET, HiChIP, and PLAC-Seq have been tested. The purpose of this software is ultimately to facilitate the interpretation of results from multiple types of experiments, and the user is encouraged to apply Peakachu's training framework to newer approaches as they become available.
