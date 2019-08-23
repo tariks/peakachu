@@ -39,13 +39,13 @@ def main(args):
                                 width=args.width)
         else:
             if args.balance:
-                X = scoreUtils.Chromosome(utils.csr_contact_matrix('KR',args.path,cname,cname,'BP',args.resolution),
+                X = scoreUtils.Chromosome(utils.csr_contact_matrix('KR',args.path,key,key,'BP',args.resolution),
                                 model=model,
                                 cname=cname,lower=args.lower,
                                 upper=args.upper,res=args.resolution,
                                 width=args.width)
             else:
-                X = scoreUtils.Chromosome(utils.csr_contact_matrix('NONE',args.path,cname,cname,'BP',args.resolution),
+                X = scoreUtils.Chromosome(utils.csr_contact_matrix('NONE',args.path,key,key,'BP',args.resolution),
                                 model=model,
                                 cname=cname,lower=args.lower,
                                 upper=args.upper,res=args.resolution,

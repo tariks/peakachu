@@ -2,7 +2,7 @@
 
 def main(args):
 
-    import argparse, gc, pathlib
+    import argparse, gc, pathlib, os
     import numpy as np
     from sklearn.externals import joblib
     from peakachu import scoreUtils, utils
@@ -27,7 +27,8 @@ def main(args):
         chromosomes = list(hic_info['chromsizes'])
     
     pre = utils.find_chrom_pre(chromosomes)
-    ccname = pre + args.model.split('.pk')[0].lstrip('chr') # ccname is consistent with chromosome labels in .hic / .cool
+    tmp = os.path.split(args.model)[1] # support full path
+    ccname = pre + tmp.split('.pk')[0].lstrip('chr') # ccname is consistent with chromosome labels in .hic / .cool
     cikada = 'chr' + ccname.lstrip('chr') # cikada always has prefix "chr"
     
     if not hic:
