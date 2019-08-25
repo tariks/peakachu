@@ -1,4 +1,4 @@
-> **_NOTE:_**  Peakachu (since 1.1.2) now supports both [.hic](https://github.com/aidenlab/juicer/wiki/Data) and [.cool](https://cooler.readthedocs.io/en/latest/datamodel.html) formats.
+> **_NOTE:_**  Peakachu (version>=1.1.2) now supports both [.hic](https://github.com/aidenlab/juicer/wiki/Data) and [.cool](https://cooler.readthedocs.io/en/latest/datamodel.html) formats.
 
 # Introduction
 ## What is Peakachu
