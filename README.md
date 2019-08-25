@@ -1,3 +1,4 @@
+> **_NOTE:_**  Peakachu now supports both [.hic](https://github.com/aidenlab/juicer/wiki/Data) and [.cool](https://cooler.readthedocs.io/en/latest/datamodel.html) formats.
 
 # Introduction
 ## What is Peakachu
@@ -100,7 +101,7 @@ peakachu train -h
 peakachu train -p Rao2014-GM12878-MboI-allreps-filtered.10kb.cool --balance -O models -b hg19.mumbach.h3k27ac.hichip.bedpe
 ```
 
-This will train one 23 random forest models, each labeled by a chromosome. Every model was trained on all of the interactions from the bedpe files EXCEPT for the chromosome which it is labeled as. The purpose of this is to allow Peakachu to predict loops from the same map it used for training, without overfitting. To use these models, you may either use the score_chromosome function to predict loops in only one chromosome, or the score_genome function when using a trained model to predict loops in a new contact map.
+This will train one 23 random forest models, each labeled by a chromosome. Every model was trained on all of the interactions from the bedpe files EXCEPT for the chromosome which it is labeled as. The purpose of this is to avoid Peakachu to predict loops from the same map it used for training, without overfitting. To use these models, you may either use the score_chromosome function to predict loops in only one chromosome, or the score_genome function when using a trained model to predict loops in a new contact map.
 
 
 ```bash
@@ -138,7 +139,7 @@ for i in models/*pkl; do peakachu score_chromosome -p Rao2014-GM12878-MboI-allre
 for i in scores/*; do peakachu pool -i $i -t .9 > ${i}.loops.txt; done
 ```
 
-The pool function serves to select the most significant non-redundant results from per-pixel probabilities calculated by the score functions. It is recommended to try different probability thresholds to achieve the best sensitivity-specificity tradeoff. The output is a standard bedpe file with the 7th and final column containing the predicted probability from the sklearn model, to support further filtering. The results can be visualized in juicer by loading as 2D annotations. Here is an example screenshot of predicted GM12878 loops in juicer:
+The pool function serves to select the most significant non-redundant results from per-pixel probabilities calculated by the score functions. It is recommended to try different probability thresholds to achieve the best sensitivity-specificity tradeoff. The output is a standard bedpe file with the 7th and final column containing the predicted probability from the sklearn model, to support further filtering. The results can be visualized in [juicebox](https://github.com/aidenlab/Juicebox) or [higlass](https://docs.higlass.io) by loading as 2D annotations. Here is an example screenshot of predicted GM12878 loops in juicer:
 ![Predicted loops from model trained on H3K27ac HiChIP interactions](https://github.com/tariks/peakachu/blob/master/example/gm12878-h3k27ac-loops.png)
 
 # Using Peakachu as a standard loop caller
