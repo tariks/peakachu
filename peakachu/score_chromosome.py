@@ -24,7 +24,7 @@ def main(args):
         Lib = cooler.Cooler(args.path)
         chromosomes = Lib.chromnames[:]
     else:
-        chromosomes = list(hic_info['chromsizes'])
+        chromosomes = utils.get_hic_chromosomes(args.path, args.resolution)
     
     pre = utils.find_chrom_pre(chromosomes)
     tmp = os.path.split(args.model)[1] # support full path

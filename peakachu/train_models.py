@@ -3,7 +3,7 @@
 def main(args):
 
     from sklearn.externals import joblib
-    import gc, pathlib
+    import gc, pathlib, straw
     import numpy as np
     from peakachu import trainUtils, utils
 
@@ -26,7 +26,7 @@ def main(args):
         Lib = cooler.Cooler(args.path)
         chromosomes = Lib.chromnames[:]
     else:
-        chromosomes = list(hic_info['chromsizes'])
+        chromosomes = utils.get_hic_chromosomes(args.path, args.resolution)
 
     # train model per chromosome
     positive_class = {}

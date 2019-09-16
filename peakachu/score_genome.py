@@ -22,7 +22,7 @@ def main(args):
         #nam = args.path.split('.cool')[0]
     else:
         hic=True
-        chromosomes = list(hic_info['chromsizes'])
+        chromosomes = utils.get_hic_chromosomes(args.path, args.resolution)
         #nam = args.path.split('.hic')[0]
     #nam = nam.split('/')[-1]
 

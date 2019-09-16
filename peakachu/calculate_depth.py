@@ -26,8 +26,11 @@ def main(args):
         import straw
         hic_info = check
         for k in hic_info['chromsizes']:
-            intra = straw.straw('NONE', args.path, k, k, 'BP', 10000)
-            totals += sum(intra[2]) # intra is a list of list x, y, v
+            try:
+                intra = straw.straw('NONE', args.path, k, k, 'BP', 10000)
+                totals += sum(intra[2]) # intra is a list of list x, y, v
+            except:
+                pass # handle the inconsistency between .hic header and the matrix
 
     print(totals)
 

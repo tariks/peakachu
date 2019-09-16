@@ -1,7 +1,7 @@
 
 # Read information from the hic header
 
-import struct, io, os
+import struct, io, os, straw
 
 def csr_contact_matrix(norm, hicfile, chr1loc, chr2loc, unit,
     binsize, is_synapse=False):
@@ -29,6 +29,21 @@ def csr_contact_matrix(norm, hicfile, chr1loc, chr2loc, unit,
     M = csr_matrix((value, (row, col)), shape=(N, N))
 
     return M
+
+def get_hic_chromosomes(hicfile, res):
+
+    hic_info = read_hic_header(hicfile)
+    chromosomes = []
+    ## handle with inconsistency between .hic header and matrix data
+    for c, Len in hic_info['chromsizes'].items():
+        try:
+            loc = '{0}:{1}:{2}'.format(c, 0, min(Len, 100000))
+            _ = straw.straw('NONE', hicfile, loc, loc, 'BP', res)
+            chromosomes.append(c)
+        except:
+            pass
+    
+    return chromosomes
 
 
 def find_chrom_pre(chromlabels):
