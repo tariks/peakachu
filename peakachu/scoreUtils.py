@@ -13,8 +13,7 @@ class Chromosome():
     def __init__(self, coomatrix, model, lower=1, upper=500, cname='chrm', res=10000, width=5):
         # cLen = coomatrix.shape[0] # seems useless
         R, C = coomatrix.nonzero()
-        validmask = np.isfinite(coomatrix.data) & (
-            C-R+1 > lower) & (C-R < upper)
+        validmask = np.isfinite(coomatrix.data) & (C-R+1 > lower) & (C-R < upper)
         R, C, data = R[validmask], C[validmask], coomatrix.data[validmask]
         self.M = sparse.csr_matrix((data, (R, C)), shape=coomatrix.shape)
         self.ridx, self.cidx = R, C
@@ -51,8 +50,7 @@ class Chromosome():
                     p2LL = center/np.mean(window[ls-1-ls//4:ls, :1+ls//4])
                     indicatar_vars = np.array([p2LL])
                     ranks = stats.rankdata(window, method='ordinal')
-                    window = np.hstack(
-                        (window.flatten(), ranks, indicatar_vars))
+                    window = np.hstack((window.flatten(), ranks, indicatar_vars))
                     window = window.flatten()
                     additional = 1
 
