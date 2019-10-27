@@ -86,15 +86,9 @@ class Chromosome():
     def writeBed(self, out, prob_csr, raw_csr):
         pathlib.Path(out).mkdir(parents=True, exist_ok=True)
         with open(out + '/' + self.chromname + '.bed', 'w') as output_bed:
-            x, y = prob_csr.nonzero()
-            bed_df = pd.DataFrame(
-                columns=['chrom1', 'st1', 'ed1', 'chrom2',
-                         'st2', 'ed2', 'prob', 'count']
-            )
-            bed_df['chrom1'] = bed_df['chrom2'] = self.chromname
-            bed_df['st1'] = bed_df['ed1'] = x * self.r
-            bed_df['st2'] = bed_df['ed2'] = y * self.r
-            bed_df['prob'] = np.array(prob_csr[x, y]).ravel()
-            bed_df['count'] = np.array(raw_csr[x, y]).ravel()
-            bed_df[['ed1', 'ed2']] += self.r
-            bed_df.to_csv(output_bed, sep='\t', header=False, index=False)
+            r, c = prob_csr.nonzero()
+            for i in range(r.size):
+                line = [self.chromname, r[i]*self.r, (r[i]+1)*self.r,
+                        self.chromname, c[i]*self.r, (c[i]+1)*self.r,
+                        prob_csr[r[i],c[i]], raw_csr[r[i],c[i]]]
+                output_bed.write('\t'.join(list(map(str, line)))+'\n')
