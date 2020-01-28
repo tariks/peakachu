@@ -148,17 +148,18 @@ The pool function serves to select the most significant non-redundant results fr
 Models for predicting loops in Hi-C have already been prepared using CTCF ChIA-PET and H3K27ac HiChIP as training sets, at a variety of read depths. Simply download the appropriate model file and run the score_genome function.
 
 |   Total intra reads  |  CTCF Model Link | H3K27ac Model  Link |
-|----------------------|---------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
-|    > 2 billion       | [CTCF total](https://www.dropbox.com/s/enyg2m7ebj8mxsv/down100.ctcf.pkl?dl=0)   | [H3K27ac total](https://www.dropbox.com/s/yasl5hu0v510k2v/down100.h3k27ac.pkl?dl=0)   |
-|   1.9 - 2 billion    | [CTCF 90%](https://www.dropbox.com/s/g12hy9f28igh0ng/down90.ctcf.pkl?dl=0)      | [H3K27ac 90%](https://www.dropbox.com/s/kdbv52eeilkzqfr/down90.h3k27ac.pkl?dl=0)      |
-|   1.7 - 1.9 billion  | [CTCF 80%](https://www.dropbox.com/s/n2m4jxxojh0u5ay/down80.ctcf.pkl?dl=0)      | [H3K27ac 80%](https://www.dropbox.com/s/45ekayzigeyuown/down80.h3k27ac.pkl?dl=0)      |
-|   1.5 - 1.7 billion  | [CTCF 70%](https://www.dropbox.com/s/h9vm8z0uysti8xm/down70.ctcf.pkl?dl=0)      | [H3K27ac 70%](https://www.dropbox.com/s/mrhe0uayv402vfk/down70.h3k27ac.pkl?dl=0)      |
-|   1.3 - 1.5 billion  | [CTCF 60%](https://www.dropbox.com/s/cfkfem4w8dhhgwm/down60.ctcf.pkl?dl=0)      | [H3K27ac 60%](https://www.dropbox.com/s/0f9xv6ljjlcwnsv/down60.h3k27ac.pkl?dl=0)      |
-|   1.1 - 1.3 billion  | [CTCF 50%](https://www.dropbox.com/s/c0b6axxb16p2nd7/down50.ctcf.pkl?dl=0)      | [H3K27ac 50%](https://www.dropbox.com/s/3w4befpvu7c7cqe/down50.h3k27ac.pkl?dl=0)      |
-|   0.9 - 1.1 billion  | [CTCF 40%](https://www.dropbox.com/s/8lvcdjenyoc8ggy/down40.ctcf.pkl?dl=0)      | [H3K27ac 40%](https://www.dropbox.com/s/xwlk864nkoafzsy/down40.h3k27ac.pkl?dl=0)      |
-|   0.7 - 0.9 billion  | [CTCF 30%](https://www.dropbox.com/s/f1383jpzj3addi4/down30.ctcf.pkl?dl=0)      | [H3K27ac 30%](https://www.dropbox.com/s/dyvtyqvu3wpq3a5/down30.h3k27ac.pkl?dl=0)      |
-|   0.4 - 0.7 billion  | [CTCF 20%](https://www.dropbox.com/s/a5nwa1xlg22ud24/down20.ctcf.pkl?dl=0)      | [H3K27ac 20%](https://www.dropbox.com/s/qjm84cpw3uzlidp/down20.h3k27ac.pkl?dl=0)      |
-|    < 400 million     | [CTCF 10%](https://www.dropbox.com/s/cqi0ws8een9ad4t/down10.ctcf.pkl?dl=0)      | [H3K27ac 10%](https://www.dropbox.com/s/q8mlwn4mz6rnumr/down10.h3k27ac.pkl?dl=0)      |
+|----------------------|-------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
+|      2 billion       | [CTCF total](https://dl.dropboxusercontent.com/s/enyg2m7ebj8mxsv/down100.ctcf.pkl?dl=0)   | [H3K27ac total](https://dl.dropboxusercontent.com/s/yasl5hu0v510k2v/down100.h3k27ac.pkl?dl=0)   |
+|     1.8 billion      | [CTCF 90%](https://dl.dropboxusercontent.com/s/g12hy9f28igh0ng/down90.ctcf.pkl?dl=0)      | [H3K27ac 90%](https://dl.dropboxusercontent.com/s/kdbv52eeilkzqfr/down90.h3k27ac.pkl?dl=0)      |
+|     1.6 billion      | [CTCF 80%](https://dl.dropboxusercontent.com/s/n2m4jxxojh0u5ay/down80.ctcf.pkl?dl=0)      | [H3K27ac 80%](https://dl.dropboxusercontent.com/s/45ekayzigeyuown/down80.h3k27ac.pkl?dl=0)      |
+|     1.4 billion      | [CTCF 70%](https://dl.dropboxusercontent.com/s/h9vm8z0uysti8xm/down70.ctcf.pkl?dl=0)      | [H3K27ac 70%](https://dl.dropboxusercontent.com/s/mrhe0uayv402vfk/down70.h3k27ac.pkl?dl=0)      |
+|     1.2 billion      | [CTCF 60%](https://dl.dropboxusercontent.com/s/cfkfem4w8dhhgwm/down60.ctcf.pkl?dl=0)      | [H3K27ac 60%](https://dl.dropboxusercontent.com/s/0f9xv6ljjlcwnsv/down60.h3k27ac.pkl?dl=0)      |
+|      1 billion       | [CTCF 50%](https://dl.dropboxusercontent.com/s/c0b6axxb16p2nd7/down50.ctcf.pkl?dl=0)      | [H3K27ac 50%](https://dl.dropboxusercontent.com/s/3w4befpvu7c7cqe/down50.h3k27ac.pkl?dl=0)      |
+|     800 million      | [CTCF 40%](https://dl.dropboxusercontent.com/s/8lvcdjenyoc8ggy/down40.ctcf.pkl?dl=0)      | [H3K27ac 40%](https://dl.dropboxusercontent.com/s/xwlk864nkoafzsy/down40.h3k27ac.pkl?dl=0)      |
+|     600 million      | [CTCF 30%](https://dl.dropboxusercontent.com/s/f1383jpzj3addi4/down30.ctcf.pkl?dl=0)      | [H3K27ac 30%](https://dl.dropboxusercontent.com/s/dyvtyqvu3wpq3a5/down30.h3k27ac.pkl?dl=0)      |
+|     400 million      | [CTCF 20%](https://dl.dropboxusercontent.com/s/a5nwa1xlg22ud24/down20.ctcf.pkl?dl=0)      | [H3K27ac 20%](https://dl.dropboxusercontent.com/s/qjm84cpw3uzlidp/down20.h3k27ac.pkl?dl=0)      |
+|     200 million      | [CTCF 10%](https://dl.dropboxusercontent.com/s/cqi0ws8een9ad4t/down10.ctcf.pkl?dl=0)      | [H3K27ac 10%](https://dl.dropboxusercontent.com/s/q8mlwn4mz6rnumr/down10.h3k27ac.pkl?dl=0)      |
+|      30 million      | [CTCF 1.5%](https://dl.dropboxusercontent.com/s/5gxeervadlga1b3/down1.ctcf.pkl?dl=0)      | [H3K27ac 1.5%](https://dl.dropboxusercontent.com/s/uh98lt1rbyauhgn/down1.h3k27ac.pkl?dl=0)      |
 
 To make it clear, let's download another Hi-C dataset from 4DN: https://data.4dnucleome.org/files-processed/4DNFI5IHU27G/@@download/4DNFI5IHU27G.mcool. Peakachu provides a handy function `peakachu depth` to extract the total number of intra-chromosomal pairs from *[cool URI](https://cooler.readthedocs.io/en/latest/concepts.html#uri-string)*:
 
@@ -169,11 +170,11 @@ peakachu depth -p 4DNFI5IHU27G.mcool:resolutions/10000
 
  592991890
 
-According to the table, for ~600 million intra-reads, we recommend using the 20% models in your prediction. Please refer to our paper to learn the differences between the CTCF and H3K27ac models.
+According to the table, for ~600 million intra-reads, we recommend using the 30% models in your prediction. Please refer to our paper to learn the differences between the CTCF and H3K27ac models.
 
 
 ```bash
-peakachu score_genome -r 10000 --balance -p 4DNFI5IHU27G.mcool:resolutions/10000 -O scores -m down20.ctcf.pkl
+peakachu score_genome -r 10000 --balance -p 4DNFI5IHU27G.mcool:resolutions/10000 -O scores -m down30.ctcf.pkl
 for i in scores/*; do peakachu pool -i $i -t .9 > ${i}.loops.txt; done
 ```
 # Not just Hi-C
