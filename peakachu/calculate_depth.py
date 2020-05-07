@@ -21,8 +21,10 @@ def main(args):
         import cooler
         Lib = cooler.Cooler(args.path)
 
+        mindis = args.min_dis // Lib.binsize
+
         for k in Lib.chromnames[:]:
-            intra = np.triu(Lib.matrix(balance=False, sparse=False).fetch(k))
+            intra = np.triu(Lib.matrix(balance=False, sparse=False).fetch(k), k=mindis)
             totals += int(intra.sum())
     else:
         import straw

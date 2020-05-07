@@ -36,6 +36,8 @@ def getargs():
     for i in subs[:-1]:
         i.add_argument('-p', '--path',
                          help = 'Path to a .cool URI string or a .hic file.')
+    subdepth.add_argument('--min-dis', default=20000, type=int,
+                         help = 'Only count reads with genomic distance greater than this value.')
     for i in subs[1:-1]:
         i.add_argument('--balance',action='store_true', help='Whether or not using the ICE/KR-balanced matrix.')
         i.add_argument('-O', '--output', help='Folder path to store results.')
