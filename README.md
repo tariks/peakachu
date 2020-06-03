@@ -63,7 +63,7 @@ GM12878 is a commonly studied cell-line based on lymphoblasts from an adult indi
 
 ## Data preparation
 
-Peakachu requires the contact map to be a cooler file and any training input to be a text file in bedpe format. Example training data is included in the github repository, consisting of bedpe files prepared from supplementary tables in [Tang et al](https://www.cell.com/cell/fulltext/S0092-8674%2815%2901504-4) and [Mumbach et al](https://www.ncbi.nlm.nih.gov/pubmed/28945252). Cooler files may be found at the [4DN data portal](https://data.4dnucleome.org/).
+Peakachu requires the contact map to be a .cool file or a .hic file and any training input to be a text file in bedpe format. Example training data can be found at the [training-sets] (https://github.com/tariks/peakachu/tree/master/training-sets) subfolder. Cooler files may be found at the [4DN data portal](https://data.4dnucleome.org/).
 
 
 ```bash
@@ -99,10 +99,10 @@ peakachu train -h
 
 
 ```bash
-peakachu train -p Rao2014-GM12878-MboI-allreps-filtered.10kb.cool --balance -O models -b hg19.mumbach.h3k27ac.hichip.bedpe
+peakachu train -p Rao2014-GM12878-MboI-allreps-filtered.10kb.cool --balance -O models -b gm12878.mumbach.h3k27ac-hichip.hg19.bedpe
 ```
 
-This will train one 23 random forest models, each labeled by a chromosome. Every model was trained on all of the interactions from the bedpe files EXCEPT for the chromosome which it is labeled as. The purpose of this is to avoid Peakachu to predict loops from the same map it used for training, without overfitting. To use these models, you may either use the score_chromosome function to predict loops in only one chromosome, or the score_genome function when using a trained model to predict loops in a new contact map.
+This will train one 23 random forest models, each labeled by a chromosome. Every model was trained on all of the interactions from the bedpe files. The purpose of this is to avoid Peakachu to predict loops from the same map it used for training, without overfitting. To use these models, you may either use the score_chromosome function to predict loops in only one chromosome, or the score_genome function when using a trained model to predict loops in a new contact map.
 
 
 ```bash
