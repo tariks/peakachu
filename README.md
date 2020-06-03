@@ -63,7 +63,7 @@ GM12878 is a commonly studied cell-line based on lymphoblasts from an adult indi
 
 ## Data preparation
 
-Peakachu requires the contact map to be a .cool file or a .hic file and any training input to be a text file in bedpe format. Example training data can be found at the [training-sets] (https://github.com/tariks/peakachu/tree/master/training-sets) subfolder. Cooler files may be found at the [4DN data portal](https://data.4dnucleome.org/).
+Peakachu requires the contact map to be a .cool file or a .hic file and any training input to be a text file in bedpe format. Example training data can be found at the [training-sets](https://github.com/tariks/peakachu/tree/master/training-sets) subfolder. Cooler files may be found at the [4DN data portal](https://data.4dnucleome.org/).
 
 
 ```bash
