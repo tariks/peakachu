@@ -6,7 +6,7 @@ local background of each contact into account.
 
 .. image:: ./ICE-vs-prob.png
         :align: center
-        :scale: 70 %
+        :scale: 50 %
 
 We found the fold change of the Peakachu probability scores can be directly used to
 identify differential chromatin loops between samples. To demonstrate this, we proposed
@@ -16,7 +16,7 @@ dynamic gene expressions. (Supplementary Figure 20 of the manuscript).
 
 .. image:: ./supple-fig20.png
         :align: center
-        :scale: 70 %
+        :scale: 50 %
 
 Pipeline
 ========
