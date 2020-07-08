@@ -11,19 +11,25 @@ def main(args):
     from peakachu import peakacluster
 
     res = args.resolution
-    x = pd.read_table(args.infile, index_col=0,
-                      usecols=[0, 1, 4, 6, 7], header=None)
-    chromosomes = list(set(x.index))
+    x = {}
+    with open(args.infile, 'r') as source:
+        for line in source:
+            p = line.rstrip().split()
+            chrom = p[0]
+            if float(p[6]) > args.threshold:
+                if not chrom in x:
+                    x[chrom] = []
+                x[chrom].append([int(p[1]), int(p[4]), float(p[6]), float(p[7])])
+    for c in x:
+        x[c] = np.r_[x[c]]
 
-    for chrom in chromosomes:
-        X = x.loc[chrom].values
+    for chrom in x:
+        X = x[chrom]
         r = X[:, 0].astype(int)//res
         c = X[:, 1].astype(int)//res
         p = X[:, 2].astype(float)
         raw = X[:, 3].astype(float)
         d = c-r
-        idx = (p > args.threshold)
-        r, c, p, raw, d = r[idx], c[idx], p[idx], raw[idx], d[idx]
         tmpr, tmpc, tmpp, tmpraw, tmpd = r, c, p, raw, d
         #rawmatrix={(r[i],c[i]): raw[i] for i in range(len(r))}
         matrix = {(r[i], c[i]): p[i] for i in range(len(r))}
