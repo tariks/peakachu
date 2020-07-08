@@ -7,18 +7,7 @@ Peakachu is an acronym that standands for Unveil Hi-C Anchors and Peaks. It take
 ## Citation
 Tarik J. Salameh, Xiaotao Wang, Fan Song, Bo Zhang, Sage M. Wright, Chachrit Khunsriraksakul, Feng Yue. A supervised learning framework for chromatin loop detection in genome-wide contact maps. biorXiv. doi: https://doi.org/10.1101/739698
 
-Peakachu requires Python3 and several scientific packages to run. It is best to set up a conda environment then install from one of PyPI, github, or conda. Copy and paste one of the command snippets below:
-
-
-```bash
-conda config --add channels defaults
-conda config --add channels bioconda
-conda config --add channels conda-forge
-conda create -n 3dgenome python=3.6 scikit-learn=0.20.2 numpy scipy pandas h5py cooler
-source activate 3dgenome
-pip install peakachu hic-straw
-```
-
+Peakachu requires Python3 and several scientific packages to run. It is best to set up a conda environment then install from github. Copy and paste the command snippets below:
 
 ```bash
 conda config --add channels defaults
