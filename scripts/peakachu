@@ -48,6 +48,8 @@ def getargs():
         i.add_argument('-m', '--model', type = str, help = '''Path to pickled model file.''')
         i.add_argument('-l', '--lower', type = int, default=2, help = '''Lower bound of distance between loci in bins (default 2).''')
         i.add_argument('-u', '--upper', type = int, default=300, help = '''Upper bound of distance between loci in bins (default 300).''')
+        i.add_argument('--minimum-prob', type = float, default=0.5, help = '''Only output pixels with probability score greater than this value.''')
+
     subpool.add_argument('-i', '--infile',
                         help = '''Path to the bedpe file containing model output''')
 

@@ -56,5 +56,5 @@ def main(args):
                                       cname=cikada, lower=args.lower,
                                       upper=args.upper, res=args.resolution,
                                       width=args.width)
-    result, R = X.score()
+    result, R = X.score(thre=args.minimum_prob)
     X.writeBed(args.output, result, R)

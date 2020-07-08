@@ -66,7 +66,7 @@ class Chromosome():
         probas = self.model.predict_proba(fts)[:, 1]
         return probas, clist
 
-    def score(self):
+    def score(self, thre=0.5):
         wsize = self.w
         model = self.model
         print('scoring matrix {}'.format(self.chromname))
@@ -74,7 +74,7 @@ class Chromosome():
         coords = [(r, c) for r, c in zip(self.ridx, self.cidx)]
         p, clist = self.getwindow(coords)
         clist = np.r_[clist]
-        pfilter = p >= 0.5
+        pfilter = p > thre
         ri = clist[:, 0][pfilter]
         ci = clist[:, 1][pfilter]
         result = sparse.csr_matrix((p[pfilter], (ri, ci)), shape=self.M.shape)
