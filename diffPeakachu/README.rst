@@ -6,8 +6,8 @@ local background of each contact into account.
 
 .. image:: ./ICE-vs-prob.png
         :align: center
-        :height: 100px
-        :width: 200px
+        :height: 60px
+        :width: 120px
         :scale: 70 %
 
 We found the fold change of the Peakachu probability scores can be directly used to
