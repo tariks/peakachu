@@ -1,6 +1,4 @@
-# Author: Tarik Salameh
-
-__author__ = 'Tarik Salameh'
-__version__ = '1.1.4'
+__author__ = 'Tarik Salameh and Xiaotao Wang'
+__version__ = '1.1.5'
 __license__ = 'GPLv3+'
 Me = __file__

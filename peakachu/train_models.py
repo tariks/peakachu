@@ -22,15 +22,16 @@ def main(args):
     else:
         hic = True
 
-    coords = trainUtils.parsebed(args.bedpe, lower=2, res=args.resolution)
-    kde, lower, long_start, long_end = trainUtils.learn_distri_kde(coords)
+    res = args.resolution
+    coords = trainUtils.parsebed(args.bedpe, lower=5*res)
+    kde, lower, long_start, long_end = trainUtils.learn_distri_kde(coords, res=res)
 
     if not hic:
         import cooler
         Lib = cooler.Cooler(args.path)
         chromosomes = Lib.chromnames[:]
     else:
-        chromosomes = utils.get_hic_chromosomes(args.path, args.resolution)
+        chromosomes = utils.get_hic_chromosomes(args.path, res)
 
     # train model per chromosome
     positive_class = {}
@@ -47,11 +48,26 @@ def main(args):
         else:
             if args.balance:
                 X = utils.csr_contact_matrix(
-                    'KR', args.path, key, key, 'BP', args.resolution)
+                    'KR', args.path, key, key, 'BP', res)
             else:
                 X = utils.csr_contact_matrix(
-                    'NONE', args.path, key, key, 'BP', args.resolution)
-        clist = coords[chromname]
+                    'NONE', args.path, key, key, 'BP', res)
+
+        # deal with the situation when resolutions of the matrix
+        # and the training set are different
+        clist = []
+        for s1, e1, s2, e2 in coords[chromname]:
+            bins1 = range(s1//res, (e1+res-1)//res)
+            bins2 = range(s2//res, (e2+res-1)//res)
+            maxv = 0
+            binpair = None
+            for b1 in bins1:
+                for b2 in bins2:
+                    if X[b1, b2] > maxv:
+                        maxv = X[b1, b2]
+                        binpair = (b1, b2)
+            if maxv > 0:
+                clist.append(binpair)
 
         try:
             positive_class[chromname] = np.vstack((f for f in trainUtils.buildmatrix(

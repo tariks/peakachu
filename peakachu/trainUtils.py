@@ -66,50 +66,56 @@ def trainRF(X, F, nproc=1):
         X.shape[0], F.shape[0]))
     gc.collect()
     params = {}
-    params['class_weight'] = ['balanced', None]
+    params['class_weight'] = ['balanced']
     #params['class_weight'] += [{1: w} for w in range(5,10000,500)]
-    params['n_estimators'] = [100]
+    params['n_estimators'] = [200]
     params['n_jobs'] = [1]
     params['max_features'] = ['auto']
     params['max_depth'] = [20]
     params['random_state'] = [42]
     #from hellinger_distance_criterion import HellingerDistanceCriterion as hdc
     #h = hdc(1,np.array([2],dtype='int64'))
-    params['criterion'] = ['gini']
+    params['criterion'] = ['gini', 'entropy']
     #model = forest(**params)
     mcc = metrics.make_scorer(metrics.matthews_corrcoef)
     model = GridSearchCV(forest(), param_grid=params,
-                         scoring=mcc, verbose=2, n_jobs=1, cv=3)
+                         scoring=mcc, verbose=2, n_jobs=4, cv=5)
     y = np.array([1]*X.shape[0] + [0]*F.shape[0])
     x = np.vstack((X, F))
     model.fit(x, y)
-    fts = model.best_estimator_.feature_importances_[:]
     params = model.best_params_
     print(params)
     print(model.best_score_)
-    fts = fts.tolist()
     print('{} peaks {} controls'.format(X.shape[0], F.shape[0]))
+
     return model.best_estimator_
 
 
-def parsebed(chiafile, res=10000, lower=1, upper=5000000):
+def parsebed(chiafile, lower=50000, upper=4000000):
 
     coords = defaultdict(set)
-    upper = upper // res
     with open(chiafile) as o:
         for line in o:
-            s = line.rstrip().split()
-            a, b = float(s[1]), float(s[4])
-            a, b = int(a), int(b)
-            if a > b:
-                a, b = b, a
-            a //= res
-            b //= res
-            # all chromosomes including X and Y
-            if (b-a > lower) and (b-a < upper) and 'M' not in s[0]:
-                # always has prefix "chr", avoid potential bugs
-                chrom = 'chr' + s[0].lstrip('chr')
-                coords[chrom].add((a, b))
+            p = line.rstrip().split()
+
+            if 'M' in p[0]:
+                continue
+            if '_' in p[0]: # remove any unassembled contigs or scaffolds
+                continue
+            
+            s1, e1, s2, e2 = int(p[1]), int(p[2]), int(p[4]), int(p[5])
+            if s1 > s2:
+                s1, s2 = s2, s1
+                e1, e2 = e2, e1
+            
+            if s2 - s1 > upper:
+                continue
+            if s2 - s1 < lower:
+                continue
+            
+            # always has prefix "chr", avoid potential bugs
+            chrom = 'chr' + p[0].lstrip('chr')
+            coords[chrom].add((s1, e1, s2, e2))
 
     for c in coords:
         coords[c] = sorted(coords[c])
@@ -117,11 +123,13 @@ def parsebed(chiafile, res=10000, lower=1, upper=5000000):
     return coords
 
 
-def learn_distri_kde(coords):
+def learn_distri_kde(coords, res):
 
     dis = []
     for c in coords:
-        for a, b in coords[c]:
+        for s1, e1, s2, e2 in coords[c]:
+            a = (s1 + e1) // (2 * res)
+            b = (s2 + e2) // (2 * res)
             dis.append(b-a)
 
     lower = min(dis)
