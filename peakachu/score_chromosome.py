@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 
-
 def main(args):
 
     import argparse
-    import gc
     import pathlib
     import os
     import numpy as np
@@ -56,5 +54,7 @@ def main(args):
                                       cname=cikada, lower=args.lower,
                                       upper=args.upper, res=args.resolution,
                                       width=args.width)
+    
+    outfil = os.path.join(args.output, '{0}.bed'.format(cikada))
     result, R = X.score(thre=args.minimum_prob)
-    X.writeBed(args.output, result, R)
+    X.writeBed(outfil, result, R)

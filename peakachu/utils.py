@@ -36,7 +36,6 @@ def csr_contact_matrix(norm, hicfile, chr1loc, chr2loc, unit,
 
     return M
 
-
 def get_hic_chromosomes(hicfile, res):
 
     hic_info = read_hic_header(hicfile)

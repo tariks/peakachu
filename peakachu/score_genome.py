@@ -1,18 +1,13 @@
 #!/usr/bin/env python
 
-
 def main(args):
 
     import argparse
-    import gc
-    import pathlib
     from sklearn.externals import joblib
     import numpy as np
     from peakachu import scoreUtils, utils
 
     np.seterr(divide='ignore', invalid='ignore')
-
-    pathlib.Path(args.output).mkdir(parents=True, exist_ok=True)
 
     model = joblib.load(args.model)
 

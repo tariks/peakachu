@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 def main(args):
 
     from sklearn.externals import joblib
@@ -23,7 +22,7 @@ def main(args):
         hic = True
 
     res = args.resolution
-    coords = trainUtils.parsebed(args.bedpe, lower=5*res)
+    coords = trainUtils.parsebed(args.bedpe, lower=6*res)
     kde, lower, long_start, long_end = trainUtils.learn_distri_kde(coords, res=res)
 
     if not hic:

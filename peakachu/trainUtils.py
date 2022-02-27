@@ -1,10 +1,5 @@
 #!/usr/bin/env python
-# Program to train classifier given a cooler file and
-# paired bedfile containing ChIA-PET peaks
-# Author: Tarik Salameh
-
 import numpy as np
-from random import randint
 from sklearn.ensemble import RandomForestClassifier as forest
 from sklearn.model_selection import GridSearchCV
 from sklearn import metrics
@@ -13,40 +8,33 @@ from scipy import stats
 import gc
 import random
 
-
-def buildmatrix(Matrix, coords, width=5, lower=1, positive=True, stop=5000):
+def buildmatrix(Matrix, coords, width=5, positive=True, stop=5000):
     """
     Generate training set
     :param coords: List of tuples containing coord bins
     :param width: Distance added to center. width=5 makes 11x11 windows
     :return: yields paired positive/negative samples for training
     """
-    w2 = int(width//2)
     negcount = 0
     for c in coords:
         x, y = c[0], c[1]
-        if y-x < lower:
+        if y-x < width:
             pass
         else:
             try:
                 window = Matrix[x-width:x+width+1,
                                 y-width:y+width+1].toarray()
-                if np.count_nonzero(window) < window.size*.1:
+                window[np.isnan(window)] = 0
+                if np.count_nonzero(window) < window.size*0.1: # minimum filtering
                     pass
                 else:
                     center = window[width, width]
-                    ls = window.shape[0]
-                    p2LL = center/np.mean(window[ls-1-ls//4:ls, :1+ls//4])
+                    p2LL = center/np.mean(window[:width, :width])
                     if positive and p2LL < 0.1:
                         pass
                     else:
-                        indicatar_vars = np.array([p2LL])
                         ranks = stats.rankdata(window, method='ordinal')
-                        window = np.hstack(
-                            (window.flatten(), ranks, indicatar_vars))
-                        window = window.flatten()
-                        s2 = (1+2*width)**2
-                        s2 //= 2
+                        window = np.r_[window.ravel(), ranks, p2LL]
                         if window.size == 1+2*(2*width+1)**2 and np.all(np.isfinite(window)):
                             if not positive:
                                 negcount += 1

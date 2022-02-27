@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import argparse, sys
 from peakachu import train_models,score_genome,score_chromosome,call_loops,calculate_depth
+
 def getargs():
     ## Construct an ArgumentParser object for command-line arguments
     parser = argparse.ArgumentParser(description='''Train Random Forest with Hi-C data and training peaklist.
@@ -23,12 +24,7 @@ def getargs():
             help='''Print centroid loci from score_x output''')
     subpool.set_defaults(func=call_loops.main)
     subs=[subdepth,subtrain,subchrom,subgen,subpool]
-    #subpool.add_argument('-l','--lower',
-    #                     help = 'Lower bound of report in bp (20000)',
-    #                     type = int, default=20000)
-    #subpool.add_argument('-u','--upper',
-    #                     help = 'Upper bound of report in bp (300000)',
-    #                     type = int, default=300000)
+    
     for i in subs[1:]:
         i.add_argument('-r', '--resolution',
                          help = 'Resolution in bp, default 10000',
@@ -38,15 +34,18 @@ def getargs():
                          help = 'Path to a .cool URI string or a .hic file.')
     subdepth.add_argument('--min-dis', default=0, type=int,
                          help = 'Only count reads with genomic distance greater than this value.')
+
     for i in subs[1:-1]:
         i.add_argument('--balance',action='store_true', help='Whether or not using the ICE/KR-balanced matrix.')
-        i.add_argument('-O', '--output', help='Folder path to store results.')
         i.add_argument('-w', '--width', type = int, default=5,
                         help = '''Number of bins added to center of window. 
                         default width=5 corresponds to 11x11 windows''')
+    subgen.add_argument('-O', '--output', help='Output file name.')
+    subchrom.add_argument('-O', '--output', help='Folder path to store results.')
+
     for i in subs[2:-1]:
         i.add_argument('-m', '--model', type = str, help = '''Path to pickled model file.''')
-        i.add_argument('-l', '--lower', type = int, default=2, help = '''Lower bound of distance between loci in bins (default 2).''')
+        i.add_argument('-l', '--lower', type = int, default=6, help = '''Lower bound of distance between loci in bins (default 6).''')
         i.add_argument('-u', '--upper', type = int, default=300, help = '''Upper bound of distance between loci in bins (default 300).''')
         i.add_argument('--minimum-prob', type = float, default=0.5, help = '''Only output pixels with probability score greater than this value (default 0.5)''')
 
