@@ -33,15 +33,16 @@ def getargs():
         i.add_argument('-p', '--path',
                          help = 'Path to a .cool URI string or a .hic file.')
     subdepth.add_argument('--min-dis', default=0, type=int,
-                         help = 'Only count reads with genomic distance greater than this value.')
+                         help = '''Only count reads with genomic distance (in base pairs) greater than this value. (default: 0)''')
 
     for i in subs[1:-1]:
-        i.add_argument('--balance',action='store_true', help='Whether or not using the ICE/KR-balanced matrix.')
+        i.add_argument('--balance',action='store_true', help='''Whether or not using the ICE/KR-balanced matrix.''')
         i.add_argument('-w', '--width', type = int, default=5,
                         help = '''Number of bins added to center of window. 
                         default width=5 corresponds to 11x11 windows''')
     subgen.add_argument('-O', '--output', help='Output file name.')
     subchrom.add_argument('-O', '--output', help='Folder path to store results.')
+    subtrain.add_argument('-O', '--output', help='Folder path to store trained models.')
 
     for i in subs[2:-1]:
         i.add_argument('-m', '--model', type = str, help = '''Path to pickled model file.''')
@@ -53,7 +54,7 @@ def getargs():
                         help = '''Path to the bedpe file containing model output''')
     subpool.add_argument('-o', '--outfile', help='Output file name.')
     subpool.add_argument('-t', '--threshold', type = float, default = 0.9,
-                        help = 'Probability threshold applied before peak calling, default .9')
+                        help = 'Probability threshold applied before peak calling, default 0.9')
     subtrain.add_argument('-b', '--bedpe',
                         help = '''Path to the bedpe file containing positive training set.''')
    
