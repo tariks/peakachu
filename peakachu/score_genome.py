@@ -2,7 +2,6 @@
 
 def main(args):
 
-    import argparse
     from sklearn.externals import joblib
     import numpy as np
     from peakachu import scoreUtils, utils

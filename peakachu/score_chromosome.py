@@ -2,7 +2,6 @@
 
 def main(args):
 
-    import argparse
     import pathlib
     import os
     import numpy as np

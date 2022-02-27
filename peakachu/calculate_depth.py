@@ -1,8 +1,6 @@
 
 def main(args):
 
-    import argparse
-    import sys
     import numpy as np
     from scipy import sparse
     from peakachu import utils

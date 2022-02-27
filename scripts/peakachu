@@ -52,7 +52,7 @@ def getargs():
     subpool.add_argument('-i', '--infile',
                         help = '''Path to the bedpe file containing model output''')
 
-    subpool.add_argument('-t', '--threshold', type = float, default = .9,
+    subpool.add_argument('-t', '--threshold', type = float, default = 0.9,
                         help = 'Probability threshold applied before peak calling, default .9')
     subtrain.add_argument('-b', '--bedpe',
                         help = '''Path to the bedpe file containing positive training set.''')
