@@ -24,14 +24,9 @@ def main(args):
     if not hic:
         import cooler
         Lib = cooler.Cooler(args.path)
-        chromosomes = Lib.chromnames[:]
-    else:
-        chromosomes = utils.get_hic_chromosomes(args.path, args.resolution)
 
-    pre = utils.find_chrom_pre(chromosomes)
-    tmp = os.path.split(args.model)[1]  # support full path
     # ccname is consistent with chromosome labels in .hic / .cool
-    ccname = pre + tmp.split('.pk')[0].lstrip('chr')
+    ccname = args.chrom
     cikada = 'chr' + ccname.lstrip('chr')  # cikada always has prefix "chr"
 
     if not hic:
@@ -54,6 +49,5 @@ def main(args):
                                       upper=args.upper, res=args.resolution,
                                       width=args.width)
     
-    outfil = os.path.join(args.output, '{0}.bed'.format(cikada))
     result, R = X.score(thre=args.minimum_prob)
-    X.writeBed(outfil, result, R)
+    X.writeBed(args.output, result, R)
