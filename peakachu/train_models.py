@@ -3,7 +3,7 @@
 def main(args):
 
     from sklearn.externals import joblib
-    import gc
+    import gc, os
     import pathlib
     import straw
     import numpy as np
@@ -33,8 +33,7 @@ def main(args):
         chromosomes = utils.get_hic_chromosomes(args.path, res)
 
     # train model per chromosome
-    positive_class = {}
-    negative_class = {}
+    collect = {}
     for key in chromosomes:
         if key.startswith('chr'):
             chromname = key
@@ -69,14 +68,16 @@ def main(args):
                 clist.append(binpair)
 
         try:
-            positive_class[chromname] = np.vstack((f for f in trainUtils.buildmatrix(
-                X, clist, width=args.width)))
+            pos_set = [f for f in trainUtils.buildmatrix(X, clist, width=args.width, positive=True)]
             neg_coords = trainUtils.negative_generating(
                 X, kde, clist, lower, long_start, long_end)
             stop = len(clist)
-            negative_class[chromname] = np.vstack((f for f in trainUtils.buildmatrix(
-                X, neg_coords, width=args.width,
-                positive=False, stop=stop)))
+            neg_set = [f for f in trainUtils.buildmatrix(X, neg_coords, width=args.width, stop=stop, positive=False)]
+            trainset = pos_set + neg_set
+            trainset = np.r_[trainset]
+            labels = [1] * len(pos_set) + [0] * len(neg_set)
+            labels = np.r_[labels]
+            collect[chromname] = [trainset, labels]
         except:
             print(chromname, ' failed to gather fts')
 
@@ -86,12 +87,18 @@ def main(args):
         else:
             chromname = 'chr'+key
 
-        Xtrain = np.vstack(
-            (v for k, v in positive_class.items() if k != chromname))
-        Xfake = np.vstack(
-            (v for k, v in negative_class.items() if k != chromname))
-        print(chromname, 'pos/neg: ', Xtrain.shape[0], Xfake.shape[0])
-        model = trainUtils.trainRF(Xtrain, Xfake)
+        trainset = []
+        labels_ = np.r_[[]]
+        for ci in collect:
+            if (ci != chromname) and (len(collect[ci][1]) > 1):
+                trainset.append(collect[ci][0])
+                labels_ = np.r_[labels_, collect[ci][1]]
+        trainset = np.vstack(trainset)
+        
+        pn = np.count_nonzero(labels_)
+        nn = labels_.size - pn
 
-        joblib.dump(model, args.output+'/'+chromname +
-                    '.pkl', compress=('xz', 3))
+        print(chromname, 'pos/neg: ', pn, nn)
+        model = trainUtils.trainRF(trainset, labels_, nproc=args.nproc)
+
+        joblib.dump(model, os.path.join(args.output, '{0}.pkl'.format(chromname)), compress=('xz', 3))

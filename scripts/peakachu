@@ -21,7 +21,7 @@ def getargs():
             help='''Print total intra-chromosomal read count''')
     subdepth.set_defaults(func=calculate_depth.main)
     subpool = subparsers.add_parser('pool',
-            help='''Print centroid loci from score_x output''')
+            help='''Print centroid loci from score_genome/score_chromosome output''')
     subpool.set_defaults(func=call_loops.main)
     subs=[subdepth,subtrain,subchrom,subgen,subpool]
     
@@ -51,12 +51,14 @@ def getargs():
         i.add_argument('--minimum-prob', type = float, default=0.5, help = '''Only output pixels with probability score greater than this value (default 0.5)''')
 
     subpool.add_argument('-i', '--infile',
-                        help = '''Path to the bedpe file containing model output''')
+                        help = '''Path to the bedpe file outputted from score_chromosome or score_genome''')
     subpool.add_argument('-o', '--outfile', help='Output file name.')
     subpool.add_argument('-t', '--threshold', type = float, default = 0.9,
                         help = 'Probability threshold applied before peak calling, default 0.9')
     subtrain.add_argument('-b', '--bedpe',
                         help = '''Path to the bedpe file containing positive training set.''')
+    subtrain.add_argument('--nproc', type=int, default=4, help='''Number of worker processes that
+                          will be allocated for training.''')
    
     ## Parse the command-line arguments
     commands = sys.argv[1:]

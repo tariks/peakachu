@@ -5,7 +5,6 @@ from sklearn.model_selection import GridSearchCV
 from sklearn import metrics
 from collections import defaultdict, Counter
 from scipy import stats
-import gc
 import random
 
 def buildmatrix(Matrix, coords, width=5, positive=True, stop=5000):
@@ -45,38 +44,25 @@ def buildmatrix(Matrix, coords, width=5, positive=True, stop=5000):
                 pass
 
 
-def trainRF(X, F, nproc=1):
-    """
-    :param X: training set from buildmatrix
-    :param distances:
-    """
-    print('input data {} peaks and {} background'.format(
-        X.shape[0], F.shape[0]))
-    gc.collect()
+def trainRF(trainset, labels_, nproc=4):
+    
     params = {}
     params['class_weight'] = ['balanced']
-    #params['class_weight'] += [{1: w} for w in range(5,10000,500)]
     params['n_estimators'] = [200]
     params['n_jobs'] = [1]
     params['max_features'] = ['auto']
     params['max_depth'] = [20]
     params['random_state'] = [42]
-    #from hellinger_distance_criterion import HellingerDistanceCriterion as hdc
-    #h = hdc(1,np.array([2],dtype='int64'))
     params['criterion'] = ['gini', 'entropy']
-    #model = forest(**params)
     mcc = metrics.make_scorer(metrics.matthews_corrcoef)
-    model = GridSearchCV(forest(), param_grid=params,
-                         scoring=mcc, verbose=2, n_jobs=4, cv=5)
-    y = np.array([1]*X.shape[0] + [0]*F.shape[0])
-    x = np.vstack((X, F))
-    model.fit(x, y)
-    params = model.best_params_
+    clf = GridSearchCV(forest(), param_grid=params,
+                       scoring=mcc, verbose=2, n_jobs=nproc, cv=5)
+    clf.fit(trainset, labels_)
+    params = clf.best_params_
     print(params)
-    print(model.best_score_)
-    print('{} peaks {} controls'.format(X.shape[0], F.shape[0]))
+    print(clf.best_score_)
 
-    return model.best_estimator_
+    return clf.best_estimator_
 
 
 def parsebed(chiafile, lower=50000, upper=4000000):
