@@ -66,13 +66,24 @@ class Chromosome():
 
         print('scoring matrix {}'.format(self.chromname))
         print('number of candidates {}'.format(self.ridx.size))
-        coords = [(r, c) for r, c in zip(self.ridx, self.cidx)]
-        fea, clist = self.getwindow(coords)
-        p = self.model.predict_proba(fea)[:, 1]
-        pfilter = p > thre
-        ri = clist[:, 0][pfilter]
-        ci = clist[:, 1][pfilter]
-        result = sparse.csr_matrix((p[pfilter], (ri, ci)), shape=self.M.shape)
+        total_coords = [(r, c) for r, c in zip(self.ridx, self.cidx)]
+        ri = np.r_[[]]
+        ci = np.r_[[]]
+        prob_pool = np.r_[[]]
+        # to lower down the memory usage
+        batch_size = 100000
+        for t in range(0, len(total_coords), batch_size):
+            coords = total_coords[t:t+batch_size]
+            fea, clist = self.getwindow(coords)
+            p = self.model.predict_proba(fea)[:, 1]
+            pfilter = p > thre
+            ri = np.r_[ri, clist[:, 0][pfilter]]
+            ci = np.r_[ci, clist[:, 1][pfilter]]
+            prob_pool = np.r_[prob_pool, p[pfilter]]
+        ri = ri.astype(int)
+        ci = ci.astype(int)
+
+        result = sparse.csr_matrix((prob_pool, (ri, ci)), shape=self.M.shape)
         data = np.array(self.M[ri, ci]).ravel()
         self.M = sparse.csr_matrix((data, (ri, ci)), shape=self.M.shape)
 
