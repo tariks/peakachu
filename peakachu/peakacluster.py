@@ -52,7 +52,10 @@ def second_run(sort_list):
 def find_anchors(pos, min_count=3, min_dis=15000, wlen=40000, res=10000):
 
     min_dis = max(min_dis//res, 2)
-    wlen = min(wlen//res, 20)
+    if res <= 10000:
+       wlen = min(wlen//res, 20)
+    else:
+        wlen = 4
 
     count = Counter(pos)
     refidx = range(min(count), max(count)+1)

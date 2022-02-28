@@ -27,7 +27,7 @@ def getargs():
     
     for i in subs[1:]:
         i.add_argument('-r', '--resolution',
-                         help = 'Resolution in bp, default 10000',
+                         help = 'Resolution in bp (default 10000)',
                          type = int, default=10000)
     for i in subs[:-1]:
         i.add_argument('-p', '--path',
@@ -56,11 +56,11 @@ def getargs():
                         help = '''Path to the bedpe file outputted from score_chromosome or score_genome''')
     subpool.add_argument('-o', '--outfile', help='Output file name.')
     subpool.add_argument('-t', '--threshold', type = float, default = 0.9,
-                        help = 'Probability threshold applied before peak calling, default 0.9')
+                        help = 'Probability threshold applied before peak calling (default 0.9)')
     subtrain.add_argument('-b', '--bedpe',
                         help = '''Path to the bedpe file containing positive training set.''')
     subtrain.add_argument('--nproc', type=int, default=4, help='''Number of worker processes that
-                          will be allocated for training.''')
+                          will be allocated for training. (default 4)''')
    
     ## Parse the command-line arguments
     commands = sys.argv[1:]
