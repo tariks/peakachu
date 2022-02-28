@@ -25,10 +25,17 @@ def main(args):
     #nam = nam.split('/')[-1]
 
     for key in chromosomes:
+
+        if '_' in key:
+            continue
+        if 'M' in key:
+            continue
+
         if key.startswith('chr'):
             cname = key
         else:
             cname = 'chr'+key
+            
         if not hic:
             X = scoreUtils.Chromosome(Lib.matrix(balance=args.balance, sparse=True).fetch(key).tocsr(),
                                       model=model,

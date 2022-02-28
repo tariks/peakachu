@@ -7,6 +7,7 @@ class Chromosome():
     def __init__(self, coomatrix, model, lower=6, upper=300, cname='chrm', res=10000, width=5):
         
         lower = max(lower, width+1)
+        upper = min(upper, coomatrix.shape[0]-2*width)
         R, C = coomatrix.nonzero()
         validmask = np.isfinite(coomatrix.data) & (C-R > (-2*width)) & (C-R < (upper+2*width))
         R, C, data = R[validmask], C[validmask], coomatrix.data[validmask]
