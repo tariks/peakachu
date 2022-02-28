@@ -50,7 +50,7 @@ peakachu -h
 
 # Example: predicting loops in GM12878 Hi-C
 
-GM12878 is a commonly studied cell-line based on lymphoblasts from an adult individual. The following example will download a cooler file from a public source, train a series of models using ChIA-PET or HiChIP data, then predict loops using the trained models.
+The following example will download an example cooler file containing the GM12878 Hi-C data at the 10kb resolution, train a series of models using H3K27ac HiChIP interactions, then predict loops using the trained models.
 
 ## Data preparation
 
@@ -63,33 +63,32 @@ wget -O Rao2014-GM12878-MboI-allreps-filtered.10kb.cool -L https://dl.dropboxuse
 ## Train a model and predict loops
 It is always a good idea to call the help function immediately before entering a command:
 
-
 ```bash
 peakachu train -h
 ```
 
-    usage: peakachu train [-h] [-r RESOLUTION] [-p PATH] [--balance] [-O OUTPUT]
-                          [-w WIDTH] [-b BEDPE]
-    
+    usage: peakachu train [-h] [-r RESOLUTION] [-p PATH] [--balance] [-w WIDTH]
+                      [-O OUTPUT] [-b BEDPE] [--nproc NPROC]
+
     optional arguments:
       -h, --help            show this help message and exit
       -r RESOLUTION, --resolution RESOLUTION
-                            Resolution in bp, default 10000
+                            Resolution in bp (default 10000)
       -p PATH, --path PATH  Path to a .cool URI string or a .hic file.
       --balance             Whether or not using the ICE/KR-balanced matrix.
-      -O OUTPUT, --output OUTPUT
-                            Folder path to store results.
       -w WIDTH, --width WIDTH
                             Number of bins added to center of window. default
                             width=5 corresponds to 11x11 windows
+      -O OUTPUT, --output OUTPUT
+                            Folder path to store trained models.
       -b BEDPE, --bedpe BEDPE
                             Path to the bedpe file containing positive training
                             set.
-
-
+      --nproc NPROC         Number of worker processes that will be allocated for
+                            training. (default 4)
 
 ```bash
-peakachu train -p Rao2014-GM12878-MboI-allreps-filtered.10kb.cool --balance -O models -b gm12878.mumbach.h3k27ac-hichip.hg19.bedpe
+peakachu train -r 10000 -p Rao2014-GM12878-MboI-allreps-filtered.10kb.cool --balance -O models -b gm12878.mumbach.h3k27ac-hichip.hg19.bedpe
 ```
 
 This will train 23 random forest models, each labeled by a chromosome. The model for every chromosome
@@ -101,43 +100,48 @@ peakachu score_chromosome -h
 ```
 
     usage: peakachu score_chromosome [-h] [-r RESOLUTION] [-p PATH] [--balance]
-                                     [-O OUTPUT] [-w WIDTH] [-m MODEL] [-l LOWER]
-                                     [-u UPPER]
-    
+                                 [-w WIDTH] [-O OUTPUT] [-C CHROM] [-m MODEL]
+                                 [-l LOWER] [-u UPPER]
+                                 [--minimum-prob MINIMUM_PROB]
+
     optional arguments:
       -h, --help            show this help message and exit
       -r RESOLUTION, --resolution RESOLUTION
-                            Resolution in bp, default 10000
+                            Resolution in bp (default 10000)
       -p PATH, --path PATH  Path to a .cool URI string or a .hic file.
       --balance             Whether or not using the ICE/KR-balanced matrix.
-      -O OUTPUT, --output OUTPUT
-                            Folder path to store results.
       -w WIDTH, --width WIDTH
                             Number of bins added to center of window. default
                             width=5 corresponds to 11x11 windows
+      -O OUTPUT, --output OUTPUT
+                            Output file name.
+      -C CHROM, --chrom CHROM
+                            Chromosome label. Only contact data within the
+                            specified chromosome will be considered.
       -m MODEL, --model MODEL
                             Path to pickled model file.
       -l LOWER, --lower LOWER
                             Lower bound of distance between loci in bins (default
-                            2).
+                            6).
       -u UPPER, --upper UPPER
                             Upper bound of distance between loci in bins (default
                             300).
-
-
+      --minimum-prob MINIMUM_PROB
+                            Only output pixels with probability score greater than
+                            this value (default 0.5)
 
 ```bash
-peakachu score_chromosome -r 10000 -p Rao2014-GM12878-MboI-allreps-filtered.10kb.cool --balance -O GM12878-chr1-scores.bedpe -C chr1 -m models/chr1.pkl 
-peakachu pool -r 10000 -i GM12878-chr1-scores.bedpe -o GM12878-chr1-loops.bedpe -t .9
+peakachu score_chromosome -r 10000 -p Rao2014-GM12878-MboI-allreps-filtered.10kb.cool --balance -O GM12878-chr2-scores.bedpe -C chr2 -m models/chr2.pkl 
+peakachu pool -r 10000 -i GM12878-chr2-scores.bedpe -o GM12878-chr2-loops.bedpe -t .9
 ```
 
-The pool function serves to select the most significant non-redundant results from per-pixel probabilities calculated by the score functions. It is recommended to try different probability thresholds to achieve the best sensitivity-specificity tradeoff. The output is a standard bedpe file with the 7th and final column containing the predicted probability from the random forest model and the interaction frequency extracted from the contact matrix, respectively, to support further filtering. The results can be visualized in [juicebox](https://github.com/aidenlab/Juicebox) or [higlass](https://docs.higlass.io) by loading as 2D annotations. Here is an example screenshot of predicted GM12878 loops in juicer:
+The pool function serves to select the most significant non-redundant results from per-pixel probabilities calculated by the score functions. It is recommended to try different probability thresholds to achieve the best sensitivity-specificity tradeoff. The output is a standard bedpe file with the 7th and the final column containing the predicted probability from the random forest model and the interaction frequency extracted from the contact matrix, respectively, to support further filtering. The results can be visualized in [juicebox](https://github.com/aidenlab/Juicebox) or [higlass](https://docs.higlass.io) by loading as 2D annotations. Here is an example screenshot of predicted GM12878 loops in juicer:
 ![Predicted loops from model trained on H3K27ac HiChIP interactions](https://github.com/tariks/peakachu/blob/master/example/gm12878-h3k27ac-loops.png)
 
 # Using Peakachu as a standard loop caller
 
 Models for predicting loops in Hi-C have been trained using CTCF ChIA-PET interactions, H3K27ac HiChIP interactions, and a high-confidence loop set (loops that can be detected by at least two orthogonal methods from CTCF ChIA-PET, Pol2 ChIA-PET, Hi-C, CTCF HiChIP, H3K27ac HiChIP, SMC1A HiChIP, H3K4me3 PLAC-Seq, and TrAC-Loop) as positive training samples, at a variety of read depths. Simply download the appropriate model file and directly run the score_genome/score_chromosome function if you want to
-detect chromatin loops on your own Hi-C or even Micro-C maps.
+detect chromatin loops on your own Hi-C or Micro-C maps.
 
 | Total intra reads | high-confidence (5kb)                                                                                  | high-confidence (10kb)                                                                                   | high-confidence (25kb)                                                                                   | CTCF Models (10kb)                                                                      | H3K27ac Model (10kb)                                                                          |
 |-------------------|--------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
@@ -161,17 +165,17 @@ To make it clear, let's download another Hi-C dataset from 4DN: https://data.4dn
 
 
 ```bash
-peakachu depth -p 4DNFI5IHU27G.mcool:resolutions/10000
+peakachu depth -p 4DNFI5IHU27G.mcool:resolutions/1000000
 ```
 
  592991890
 
 According to the table, for ~600 million intra-reads, we recommend using the 30% models in your prediction.
 
-
 ```bash
-peakachu score_genome -r 10000 --balance -p 4DNFI5IHU27G.mcool:resolutions/10000 -O scores -m down30.ctcf.pkl
-for i in scores/*; do peakachu pool -i $i -t .9 > ${i}.loops.txt; done
+peakachu score_genome -r 10000 --balance -p 4DNFI5IHU27G.mcool:resolutions/10000 -O 4DNFI5IHU27G-peakachu-10kb-scores.bedpe -m high-confidence.600million.10kb.pkl
+peakachu pool -r 10000 -i 4DNFI5IHU27G-peakachu-10kb-scores.bedpe -o 4DNFI5IHU27G-peakachu-10kb-loops.0.95.bedpe -t 0.95
 ```
+
 # Not just Hi-C
 Peakachu has been tested on Hi-C, Micrco-C, and DNA SPRITE contact maps with good results. For training sets, ChIA-PET, HiChIP, and PLAC-Seq have been tested. The purpose of this software is ultimately to facilitate the interpretation of results from multiple types of experiments, and the user is encouraged to apply Peakachu's training framework to newer approaches as they become available.
