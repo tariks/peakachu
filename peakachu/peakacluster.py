@@ -24,7 +24,11 @@ def parse_peakachu(fil, thre, res):
             if i[0] in D[c]:
                 intermediate.append([D[c][i[0]], i[0]])
         intermediate.sort(reverse=True)
-        results[c] = second_run(intermediate)
+        if len(intermediate) > 1:
+            results[c] = second_run(intermediate)
+        else:
+            results[c] = []
+            
     
     return results, score_pool
 
