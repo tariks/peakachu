@@ -14,7 +14,7 @@ Peakachu requires Python3 and several scientific packages to run. It is best to 
 conda config --add channels defaults
 conda config --add channels bioconda
 conda config --add channels conda-forge
-conda create -n 3dgenome python=3.6 scikit-learn=0.20.2 numpy scipy pandas h5py cooler
+conda create -n 3dgenome scikit-learn=0.20.2 numpy scipy pandas h5py cooler
 source activate 3dgenome
 pip install hic-straw
 git clone https://github.com/tariks/peakachu
