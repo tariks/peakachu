@@ -169,12 +169,14 @@ To make it clear, let's download another Hi-C dataset from 4DN: https://data.4dn
 peakachu depth -p 4DNFI5IHU27G.mcool::resolutions/1000000
 ```
 
- num of intra reads in your data: 592991890
- num of intra reads in a human with matched sequencing coverage: 582003409
- suggested model: 600 million
+The output of above command will be:
 
-Based on the output above, we recommend using the 30% models (trained with ~600 million
-intra reads) in your prediction.
+    num of intra reads in your data: 592991890
+    num of intra reads in a human with matched sequencing coverage: 582003409
+    suggested model: 600 million
+
+Therefore, we recommend using the 30% models (trained with ~600 million intra reads)
+to predict loops on this data.
 
 ```bash
 peakachu score_genome -r 10000 --balance -p 4DNFI5IHU27G.mcool:resolutions/10000 -O 4DNFI5IHU27G-peakachu-10kb-scores.bedpe -m high-confidence.600million.10kb.w6.pkl
