@@ -6,54 +6,52 @@ from sklearn import metrics
 from collections import defaultdict, Counter
 from scipy import stats
 import random
+from scipy.ndimage import gaussian_filter
+from peakachu.utils import image_normalize, distance_normalize, calculate_expected
 
-def buildmatrix(Matrix, coords, width=5, positive=True, stop=5000):
+def buildmatrix(Matrix, coords, w=5):
     """
     Generate training set
     :param coords: List of tuples containing coord bins
     :param width: Distance added to center. width=5 makes 11x11 windows
-    :return: yields paired positive/negative samples for training
+    :return: yields positive/negative samples for training
     """
-    negcount = 0
-    for c in coords:
-        x, y = c[0], c[1]
-        if y-x < width:
-            pass
-        else:
-            try:
-                window = Matrix[x-width:x+width+1,
-                                y-width:y+width+1].toarray()
-                window[np.isnan(window)] = 0
-                if np.count_nonzero(window) < window.size*0.1: # minimum filtering
-                    pass
-                else:
-                    center = window[width, width]
-                    p2LL = center/np.mean(window[:width, :width])
-                    if positive and p2LL < 0.1:
-                        pass
-                    else:
-                        ranks = stats.rankdata(window, method='ordinal')
-                        window = np.r_[window.ravel(), ranks, p2LL]
-                        if window.size == 1+2*(2*width+1)**2 and np.all(np.isfinite(window)):
-                            if not positive:
-                                negcount += 1
-                            if negcount >= stop:
-                                raise StopIteration
-                            yield window
-            except:
-                pass
-
+    # pre-filter coordinates
+    coords = np.r_[coords]
+    xi, yi = coords[:,0], coords[:,1]
+    mask = (xi - w >= 0) & (yi + w + 1 <= Matrix.shape[0]) & (yi - xi > w)
+    xi, yi = xi[mask], yi[mask]
+    if xi.size < 10:
+        return
+    
+    # calculate expected values
+    maxdis = max([abs(i-j) for i, j in zip(xi, yi)]) + 2*w
+    exp_arr = calculate_expected(Matrix, maxdis)
+    
+    # extract and normalize submatrices surrounding the input coordinates
+    seed = np.arange(-w, w+1)
+    delta = np.tile(seed, (seed.size, 1))
+    xxx = xi.reshape((xi.size, 1, 1)) + delta.T
+    yyy = yi.reshape((yi.size, 1, 1)) + delta
+    v = np.array(Matrix[xxx.ravel(), yyy.ravel()]).ravel()
+    vvv = v.reshape((xi.size, seed.size, seed.size))
+    windows, _ = distance_normalize(vvv, exp_arr, xi, yi, w)
+    fea = []
+    for arr in windows:
+        scaled_arr = image_normalize(gaussian_filter(arr, sigma=1, order=0))
+        fea.append(scaled_arr.ravel())
+    
+    return fea
 
 def trainRF(trainset, labels_, nproc=4):
     
     params = {}
-    params['class_weight'] = ['balanced']
-    params['n_estimators'] = [200]
+    params['class_weight'] = ['balanced', 'balanced_subsample', None]
+    params['n_estimators'] = [100]
     params['n_jobs'] = [1]
-    params['max_features'] = ['auto']
-    params['max_depth'] = [20]
-    params['random_state'] = [42]
-    params['criterion'] = ['gini', 'entropy']
+    params['max_features'] = ['sqrt']
+    params['max_depth'] = [15, 20, 25]
+    params['criterion'] = ['entropy', 'gini']
     mcc = metrics.make_scorer(metrics.matthews_corrcoef)
     clf = GridSearchCV(forest(), param_grid=params,
                        scoring=mcc, verbose=2, n_jobs=nproc, cv=5)
@@ -63,7 +61,6 @@ def trainRF(trainset, labels_, nproc=4):
     print(clf.best_score_)
 
     return clf.best_estimator_
-
 
 def parsebed(chiafile, lower=50000, upper=4000000):
 
@@ -113,7 +110,7 @@ def learn_distri_kde(coords, res):
 
     # part 2: random long-range interactions
     counts, bins = np.histogram(dis, bins=100)
-    long_end = int(bins[-1])
+    long_end = max(int(bins[-1]), 5000000//res)
     tp = np.where(np.diff(counts) >= 0)[0] + 2
     long_start = int(bins[tp[0]])
 

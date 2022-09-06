@@ -2,14 +2,19 @@
 
 def main(args):
     
-    import os
+    import os, joblib
     import numpy as np
-    from sklearn.externals import joblib
     from peakachu import scoreUtils, utils
 
     np.seterr(divide='ignore', invalid='ignore')
 
+    if os.path.exists(args.output):
+        os.remove(args.output)
+
     model = joblib.load(args.model)
+
+    # deduce the width parameter used during the training
+    width = int((np.sqrt(model.feature_importances_.size) - 1) / 2)
 
     # more robust to check if a file is .hic
     hic_info = utils.read_hic_header(args.path)
@@ -27,24 +32,34 @@ def main(args):
     cikada = 'chr' + ccname.lstrip('chr')  # cikada always has prefix "chr"
 
     if not hic:
-        X = scoreUtils.Chromosome(Lib.matrix(balance=args.balance, sparse=True).fetch(ccname).tocsr(),
-                                  model=model,
-                                  cname=cikada, lower=args.lower,
-                                  upper=args.upper, res=args.resolution,
-                                  width=args.width)
+        if args.balance:
+            M = Lib.matrix(balance=args.balance, sparse=True).fetch(ccname).tocsr()
+            raw_M = Lib.matrix(balance=False, sparse=True).fetch(ccname).tocsr()
+            weights = Lib.bins().fetch(ccname)['weight'].values
+            X = scoreUtils.Chromosome(M, model=model, raw_M=raw_M, weights=weights,
+                                      cname=cikada, lower=args.lower,
+                                      upper=args.upper, res=args.resolution,
+                                      width=width)
+        else:
+            M = Lib.matrix(balance=False, sparse=True).fetch(ccname).tocsr()
+            X = scoreUtils.Chromosome(M, model=model, raw_M=M, weights=None,
+                                      cname=cikada, lower=args.lower,
+                                      upper=args.upper, res=args.resolution,
+                                      width=width)
     else:
         if args.balance:
-            X = scoreUtils.Chromosome(utils.csr_contact_matrix('KR', args.path, ccname, ccname, 'BP', args.resolution),
-                                      model=model,
+            M = utils.csr_contact_matrix('KR', args.path, ccname, ccname, 'BP', args.resolution)
+            raw_M = utils.csr_contact_matrix('NONE', args.path, ccname, ccname, 'BP', args.resolution)
+            X = scoreUtils.Chromosome(M, model=model, raw_M=raw_M, weights=None,
                                       cname=cikada, lower=args.lower,
                                       upper=args.upper, res=args.resolution,
-                                      width=args.width)
+                                      width=width)
         else:
-            X = scoreUtils.Chromosome(utils.csr_contact_matrix('NONE', args.path, ccname, ccname, 'BP', args.resolution),
-                                      model=model,
+            M = utils.csr_contact_matrix('NONE', args.path, ccname, ccname, 'BP', args.resolution)
+            X = scoreUtils.Chromosome(M, model=model, raw_M=M, weights=None,
                                       cname=cikada, lower=args.lower,
                                       upper=args.upper, res=args.resolution,
-                                      width=args.width)
+                                      width=width)
     
     result, R = X.score(thre=args.minimum_prob)
     X.writeBed(args.output, result, R)

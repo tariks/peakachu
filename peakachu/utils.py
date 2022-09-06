@@ -1,22 +1,17 @@
 
 # Read information from the hic header
 
-import struct
-import io
-import os
-import straw
-
+import struct, io, os, straw
+import numpy as np
+from sklearn.isotonic import IsotonicRegression
+from scipy.sparse import csr_matrix
+from numba import njit
 
 def csr_contact_matrix(norm, hicfile, chr1loc, chr2loc, unit,
                        binsize, is_synapse=False):
     '''
     Extract the contact matrix from .hic in CSR sparse format
     '''
-
-    from scipy.sparse import csr_matrix
-    import numpy as np
-    import straw
-
     tri_list = straw.straw(norm, hicfile, chr1loc,
                            chr2loc, unit, binsize, is_synapse)
     row = [r//binsize for r in tri_list[0]]
@@ -129,3 +124,103 @@ def read_hic_header(hicfile):
         info['Fragment-delimited resolutions'].append(res)
 
     return info
+
+def calculate_expected(M, maxdis, raw=False):
+
+    n = M.shape[0]
+    R, C = M.nonzero()
+    valid_pixels = np.isfinite(M.data)
+    # extract valid columns
+    if raw:
+        R, C, data = R[valid_pixels], C[valid_pixels], M.data[valid_pixels]
+        M = csr_matrix((data, (R, C)), shape=M.shape)
+        marg = np.array(M.sum(axis=0)).ravel()
+        valid_cols = marg > 0
+    else:
+        R, C = set(R[valid_pixels]), set(C[valid_pixels])
+        valid_cols = np.zeros(n, dtype=bool)
+        for i in R:
+            valid_cols[i] = True
+        for i in C:
+            valid_cols[i] = True
+    
+    # calculate the expected value for each genomic distance
+    exp_arr = np.zeros(maxdis+1)
+    for i in range(maxdis+1):
+        if i == 0:
+            valid = valid_cols
+        else:
+            valid = valid_cols[:-i] * valid_cols[i:]
+        
+        diag = M.diagonal(i)
+        diag = diag[valid]
+        if diag.size > 10:
+            exp = diag.mean()
+            exp_arr[i] = exp
+    
+    # make exp_arr stringently non-increasing
+    IR = IsotonicRegression(increasing=False, out_of_bounds='clip')
+    _d = np.where(exp_arr > 0)[0]
+    IR.fit(_d, exp_arr[_d])
+    exp_arr = IR.predict(list(range(maxdis+1)))
+
+    return exp_arr
+
+@njit
+def distance_normaize_core(sub, exp_bychrom, x, y, w):
+
+    # calculate x and y indices
+    x_arr = np.arange(x-w, x+w+1).reshape((2*w+1, 1))
+    y_arr = np.arange(y-w, y+w+1)
+
+    D = y_arr - x_arr
+    D = np.abs(D)
+    min_dis = D.min()
+    max_dis = D.max()
+    if max_dis >= exp_bychrom.size:
+        return sub
+    else:
+        exp_sub = np.zeros(sub.shape)
+        for d in range(min_dis, max_dis+1):
+            xi, yi = np.where(D==d)
+            for i, j in zip(xi, yi):
+                exp_sub[i, j] = exp_bychrom[d]
+            
+        normed = sub / exp_sub
+
+        return normed
+
+@njit
+def image_normalize(arr_2d):
+
+    arr_2d = (arr_2d - arr_2d.min()) / (arr_2d.max() - arr_2d.min()) # value range: [0,1]
+
+    return arr_2d
+
+@njit
+def distance_normalize(arr_pool, exp_bychrom, xi, yi, w):
+
+    clist = []
+    fea = []
+    for i in range(xi.size):
+        x = xi[i]
+        y = yi[i]
+        window = arr_pool[i]
+
+        bad_x, bad_y = np.where(np.isnan(window))
+        for i_, j_ in zip(bad_x, bad_y):
+            window[i_, j_] = 0
+             
+        if np.count_nonzero(window) < window.size*0.1:
+            continue
+        
+        ll_mean = window[:w, :w].mean()
+        if ll_mean > 0:
+            center = window[w, w]
+            p2LL = center / ll_mean
+            if p2LL > 0.1:
+                window = distance_normaize_core(window, exp_bychrom, x, y, w)
+                fea.append(window)
+                clist.append((x, y))
+    
+    return fea, clist

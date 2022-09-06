@@ -2,8 +2,7 @@
 
 def main(args):
 
-    from sklearn.externals import joblib
-    import gc, os
+    import gc, os, joblib
     import pathlib
     import straw
     import numpy as np
@@ -22,7 +21,7 @@ def main(args):
         hic = True
 
     res = args.resolution
-    coords = trainUtils.parsebed(args.bedpe, lower=6*res)
+    coords = trainUtils.parsebed(args.bedpe, lower=(args.width+1)*res)
     kde, lower, long_start, long_end = trainUtils.learn_distri_kde(coords, res=res)
 
     if not hic:
@@ -68,16 +67,19 @@ def main(args):
                 clist.append(binpair)
 
         try:
-            pos_set = [f for f in trainUtils.buildmatrix(X, clist, width=args.width, positive=True)]
             neg_coords = trainUtils.negative_generating(
                 X, kde, clist, lower, long_start, long_end)
-            stop = len(clist)
-            neg_set = [f for f in trainUtils.buildmatrix(X, neg_coords, width=args.width, stop=stop, positive=False)]
-            trainset = pos_set + neg_set
-            trainset = np.r_[trainset]
-            labels = [1] * len(pos_set) + [0] * len(neg_set)
-            labels = np.r_[labels]
-            collect[chromname] = [trainset, labels]
+            pos_set = trainUtils.buildmatrix(X, clist, w=args.width)
+            neg_set = trainUtils.buildmatrix(X, neg_coords, w=args.width)
+            if (not pos_set is None) and (not neg_set is None):
+                neg_set = neg_set[:len(pos_set)]
+                trainset = pos_set + neg_set
+                trainset = np.r_[trainset]
+                labels = [1] * len(pos_set) + [0] * len(neg_set)
+                labels = np.r_[labels]
+                collect[chromname] = [trainset, labels]
+            else:
+                print(chromname, ' failed to gather fts')
         except:
             print(chromname, ' failed to gather fts')
 
@@ -86,6 +88,9 @@ def main(args):
             chromname = key
         else:
             chromname = 'chr'+key
+        
+        if chromname != 'chrY':
+            continue
 
         trainset = []
         labels_ = np.r_[[]]

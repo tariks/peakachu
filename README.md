@@ -1,8 +1,7 @@
 > **_NOTE:_**  Peakachu (version>=1.1.2) now supports both [.hic](https://github.com/aidenlab/juicer/wiki/Data) and [.cool](https://cooler.readthedocs.io/en/latest/datamodel.html) formats.
 
 # Introduction
-## What is Peakachu
-Peakachu is an acronym that standands for Unveil Hi-C Anchors and Peaks. It takes genome-wide contact data as input and returns coordinates of likely interactions such as chromatin loops. A machine learning framework based on sklearn is employed to generate random forest models trained on example interactions predicted by an arbitrary experiment. For example, loops can be predicted in Hi-C data using models trained with the Hi-C profiles of interactions detected via ChIA-PET. Although Hi-C is the namesake of Peakachu, it is designed to accept any genome-wide contact map including those from Micro-C and DNA SPRITE.
+Accurately predicting chromatin loops from genome-wide interaction matrices such as Hi-C data is critical to deepening our understanding of proper gene regulation. Current approaches are mainly focused on searching for statistically enriched dots on a genome-wide map. However, given the availability of orthogonal data types such as ChIA-PET, HiChIP, Capture Hi-C, and high-throughput imaging, a supervised learning approach could facilitate the discovery of a comprehensive set of chromatin interactions. Here, we present Peakachu, a Random Forest classification framework that predicts chromatin loops from genome-wide contact maps. We compare Peakachu with current enrichment-based approaches, and find that Peakachu identifies a unique set of short-range interactions. We show that our models perform well in different platforms, across different sequencing depths, and across different species. 
 
 ## Citation
 Salameh, T.J., Wang, X., Song, F. et al. A supervised learning framework for chromatin loop detection in genome-wide contact maps. Nat Commun 11, 3428 (2020). https://doi.org/10.1038/s41467-020-17239-9
@@ -14,9 +13,9 @@ Peakachu requires Python3 and several scientific packages to run. It is best to 
 conda config --add channels defaults
 conda config --add channels bioconda
 conda config --add channels conda-forge
-conda create -n 3dgenome scikit-learn joblib=1.1.0 numpy scipy pandas h5py cooler
+conda create -n 3dgenome cooler scikit-learn statsmodels numba joblib=1.1.0
 source activate 3dgenome
-pip install hic-straw
+pip install hic-straw==0.0.6
 git clone https://github.com/tariks/peakachu
 cd peakachu
 python setup.py install
@@ -140,10 +139,12 @@ The pool function serves to select the most significant non-redundant results fr
 
 # Using Peakachu as a standard loop caller
 
-Models for predicting loops in Hi-C have been trained using CTCF ChIA-PET interactions, H3K27ac HiChIP interactions, and a high-confidence loop set (loops that can be detected by at least two orthogonal methods from CTCF ChIA-PET, Pol2 ChIA-PET, Hi-C, CTCF HiChIP, H3K27ac HiChIP, SMC1A HiChIP, H3K4me3 PLAC-Seq, and TrAC-Loop) as positive training samples, at a variety of read depths. Simply download the appropriate model file and directly run the score_genome/score_chromosome function if you want to
-detect chromatin loops on your own Hi-C or Micro-C maps.
+Models for predicting loops in Hi-C have been trained using CTCF ChIA-PET interactions, H3K27ac HiChIP interactions, and a high-confidence loop set (loops that can be detected by at least two orthogonal methods from CTCF ChIA-PET, Pol2 ChIA-PET, Hi-C, CTCF HiChIP, H3K27ac HiChIP, SMC1A HiChIP, H3K4me3 PLAC-Seq, and TrAC-Loop) as positive training samples, at a variety of read depths. Simply download the appropriate model file and directly run the score_genome/score_chromosome function if you want to detect chromatin loops on your own Hi-C or Micro-C maps.
 
-The following models were trained
+If you are using Peakachu>=1.3.0, please select a model from the following table:
+
+Instead, if you are using an old Peakachu version (<1.3.0), please select a model
+from this table:
 
 | Total intra reads | high-confidence (5kb)                                                                                    | high-confidence (10kb)                                                                                     | high-confidence (25kb)                                                                                     | CTCF Models (10kb)                                                                      | H3K27ac Model (10kb)                                                                          |
 |-------------------|----------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|

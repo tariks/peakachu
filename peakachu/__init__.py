@@ -1,4 +1,4 @@
-__author__ = 'Tarik Salameh and Xiaotao Wang'
-__version__ = '1.2.0-r2'
+__author__ = 'Xiaotao Wang and Tarik Salameh'
+__version__ = '2.0'
 __license__ = 'GPLv3+'
 Me = __file__
