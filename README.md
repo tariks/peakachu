@@ -1,24 +1,24 @@
 > **_NOTE:_**  Peakachu (version>=1.1.2) now supports both [.hic](https://github.com/aidenlab/juicer/wiki/Data) and [.cool](https://cooler.readthedocs.io/en/latest/datamodel.html) formats.
 
 # Introduction
+
 Accurately predicting chromatin loops from genome-wide interaction matrices such as Hi-C data is critical to deepening our understanding of proper gene regulation. Current approaches are mainly focused on searching for statistically enriched dots on a genome-wide map. However, given the availability of orthogonal data types such as ChIA-PET, HiChIP, Capture Hi-C, and high-throughput imaging, a supervised learning approach could facilitate the discovery of a comprehensive set of chromatin interactions. Here, we present Peakachu, a Random Forest classification framework that predicts chromatin loops from genome-wide contact maps. We compare Peakachu with current enrichment-based approaches, and find that Peakachu identifies a unique set of short-range interactions. We show that our models perform well in different platforms, across different sequencing depths, and across different species. 
 
 ## Citation
+
 Salameh, T.J., Wang, X., Song, F. et al. A supervised learning framework for chromatin loop detection in genome-wide contact maps. Nat Commun 11, 3428 (2020). https://doi.org/10.1038/s41467-020-17239-9
 
 ## Installation
-Peakachu requires Python3 and several scientific packages to run. It is best to set up a conda environment then install from github. Copy and paste the command snippets below:
+
+Peakachu requires Python3 and several scientific packages to run. It is best to first set up the environment using conda and then install Peakachu from PyPI::
 
 ```bash
 conda config --add channels defaults
 conda config --add channels bioconda
 conda config --add channels conda-forge
-conda create -n 3dgenome cooler scikit-learn statsmodels numba joblib=1.1.0
-source activate 3dgenome
-pip install hic-straw==0.0.6
-git clone https://github.com/tariks/peakachu
-cd peakachu
-python setup.py install
+conda create -n peakachu cooler scikit-learn numba joblib=1.1.0
+conda activate peakachu
+pip install -U peakachu hic-straw==0.0.6 
 ```
 
 Peakachu should now be installed as a command-line tool within the new environment. Options for all peakachu commands and sub-commands can be accessed with the -h option. 
@@ -29,27 +29,25 @@ peakachu -h
 ```
 
     usage: peakachu [-h] {train,score_chromosome,score_genome,depth,pool} ...
-    
-    Train Random Forest with Hi-C data and training peaklist.
-    
+
+    Unveil Hi-C Anchors and Peaks.
+
     positional arguments:
       {train,score_chromosome,score_genome,depth,pool}
         train               Train RandomForest model per chromosome
-        score_chromosome    Calculate interaction probability per pixel for a
-                            chromosome
-        score_genome        Calculate interaction probability per pixel for the
-                            whole genome
-        depth               Print total intra-chromosomal read count
-        pool                Print centroid loci from score_genome/score_chromosome
-                            output
-    
-    optional arguments:
+        score_chromosome    Calculate interaction probability per pixel for a chromosome
+        score_genome        Calculate interaction probability per pixel for the whole genome
+        depth               Calculate the total number of intra-chromosomal chromatin contacts and select the most appropriate pre-trained model
+                            for you.
+        pool                Print centroid loci from score_genome/score_chromosome output
+
+    options:
       -h, --help            show this help message and exit
 
 
 # Example: predicting loops in GM12878 Hi-C
 
-The following example will download an example cooler file containing the GM12878 Hi-C data at the 10kb resolution, train a series of models using H3K27ac HiChIP interactions, then predict loops using the trained models.
+The following example will download an example cooler file containing the GM12878 Hi-C data at the 10kb resolution, train a series of models using H3K27ac HiChIP interactions, and then predict loops using the trained models.
 
 ## Data preparation
 
@@ -60,31 +58,28 @@ wget -O Rao2014-GM12878-MboI-allreps-filtered.10kb.cool -L https://dl.dropboxuse
 ```
 
 ## Train a model and predict loops
+
 It is always a good idea to call the help function immediately before entering a command:
 
 ```bash
 peakachu train -h
 ```
 
-    usage: peakachu train [-h] [-r RESOLUTION] [-p PATH] [--balance] [-w WIDTH]
-                      [-O OUTPUT] [-b BEDPE] [--nproc NPROC]
+    usage: peakachu train [-h] [-r RESOLUTION] [-p PATH] [--balance] [-b BEDPE] [-w WIDTH] [--nproc NPROC] [-O OUTPUT]
 
-    optional arguments:
+    options:
       -h, --help            show this help message and exit
       -r RESOLUTION, --resolution RESOLUTION
                             Resolution in bp (default 10000)
       -p PATH, --path PATH  Path to a .cool URI string or a .hic file.
       --balance             Whether or not using the ICE/KR-balanced matrix.
+      -b BEDPE, --bedpe BEDPE
+                            Path to the bedpe file containing positive training set.
       -w WIDTH, --width WIDTH
-                            Number of bins added to center of window. default
-                            width=5 corresponds to 11x11 windows
+                            Number of bins added to center of window. default width=5 corresponds to 11x11 windows
+      --nproc NPROC         Number of worker processes that will be allocated for training. (default 4)
       -O OUTPUT, --output OUTPUT
                             Folder path to store trained models.
-      -b BEDPE, --bedpe BEDPE
-                            Path to the bedpe file containing positive training
-                            set.
-      --nproc NPROC         Number of worker processes that will be allocated for
-                            training. (default 4)
 
 ```bash
 peakachu train -r 10000 -p Rao2014-GM12878-MboI-allreps-filtered.10kb.cool --balance -O models -b gm12878.mumbach.h3k27ac-hichip.hg19.bedpe
@@ -98,36 +93,27 @@ was trained using interactions from all the other 22 chromosomes in the provided
 peakachu score_chromosome -h
 ```
 
-    usage: peakachu score_chromosome [-h] [-r RESOLUTION] [-p PATH] [--balance]
-                                 [-w WIDTH] [-O OUTPUT] [-C CHROM] [-m MODEL]
-                                 [-l LOWER] [-u UPPER]
-                                 [--minimum-prob MINIMUM_PROB]
+    usage: peakachu score_chromosome [-h] [-r RESOLUTION] [-p PATH] [--balance] [-C CHROM] [-m MODEL] [-l LOWER] [-u UPPER]
+                                 [--minimum-prob MINIMUM_PROB] [-O OUTPUT]
 
-    optional arguments:
+    options:
       -h, --help            show this help message and exit
       -r RESOLUTION, --resolution RESOLUTION
                             Resolution in bp (default 10000)
       -p PATH, --path PATH  Path to a .cool URI string or a .hic file.
       --balance             Whether or not using the ICE/KR-balanced matrix.
-      -w WIDTH, --width WIDTH
-                            Number of bins added to center of window. default
-                            width=5 corresponds to 11x11 windows
-      -O OUTPUT, --output OUTPUT
-                            Output file name.
       -C CHROM, --chrom CHROM
-                            Chromosome label. Only contact data within the
-                            specified chromosome will be considered.
+                            Chromosome label. Only contact data within the specified chromosome will be considered.
       -m MODEL, --model MODEL
                             Path to pickled model file.
       -l LOWER, --lower LOWER
-                            Lower bound of distance between loci in bins (default
-                            6).
+                            Lower bound of distance between loci in bins (default 6).
       -u UPPER, --upper UPPER
-                            Upper bound of distance between loci in bins (default
-                            300).
+                            Upper bound of distance between loci in bins (default 300).
       --minimum-prob MINIMUM_PROB
-                            Only output pixels with probability score greater than
-                            this value (default 0.5)
+                            Only output pixels with probability score greater than this value (default 0.5)
+      -O OUTPUT, --output OUTPUT
+                            Output file name.
 
 ```bash
 peakachu score_chromosome -r 10000 -p Rao2014-GM12878-MboI-allreps-filtered.10kb.cool --balance -O GM12878-chr2-scores.bedpe -C chr2 -m models/chr2.pkl 
@@ -141,9 +127,9 @@ The pool function serves to select the most significant non-redundant results fr
 
 Models for predicting loops in Hi-C have been trained using CTCF ChIA-PET interactions, H3K27ac HiChIP interactions, and a high-confidence loop set (loops that can be detected by at least two orthogonal methods from CTCF ChIA-PET, Pol2 ChIA-PET, Hi-C, CTCF HiChIP, H3K27ac HiChIP, SMC1A HiChIP, H3K4me3 PLAC-Seq, and TrAC-Loop) as positive training samples, at a variety of read depths. Simply download the appropriate model file and directly run the score_genome/score_chromosome function if you want to detect chromatin loops on your own Hi-C or Micro-C maps.
 
-If you are using Peakachu>=1.3.0, please select a model from the following table:
+If you are using Peakachu>=2.0, please select a model from the following table:
 
-Instead, if you are using an old Peakachu version (<1.3.0), please select a model
+Instead, if you are using an older Peakachu version (<2.0), please select a model
 from this table:
 
 | Total intra reads | high-confidence (5kb)                                                                                    | high-confidence (10kb)                                                                                     | high-confidence (25kb)                                                                                     | CTCF Models (10kb)                                                                      | H3K27ac Model (10kb)                                                                          |
@@ -176,19 +162,22 @@ from this table:
 | 10 million        |                                                                                                          |                                                                                                            | [0.5% 25kb](https://dl.dropboxusercontent.com/s/gsaxkgz0oh4ahgf/high-confidence.10million.25kb.pkl?dl=0)   |                                                                                         |                                                                                               |
 | 5 million         |                                                                                                          |                                                                                                            | [0.25% 25kb](https://dl.dropboxusercontent.com/s/10fbe85lpfabupw/high-confidence.5million.25kb.pkl?dl=0)   |                                                                                         |                                                                                               |
 
-To make it clear, let's download another Hi-C dataset from 4DN: https://data.4dnucleome.org/files-processed/4DNFI5IHU27G/@@download/4DNFI5IHU27G.mcool. Peakachu provides a handy function `peakachu depth` to extract the total number of intra-chromosomal pairs from *[cool URI](https://cooler.readthedocs.io/en/latest/concepts.html#uri-string)*:
+To make it clear, let's download another Hi-C dataset from 4DN: https://data.4dnucleome.org/files-processed/4DNFI5IHU27G/@@download/4DNFI5IHU27G.mcool. Peakachu provides a handy function `peakachu depth` to extract the total number of intra-chromosomal pairs in your data and help you select the most appropriate pre-trained model:
 
 
 ```bash
-peakachu depth -p 4DNFI5IHU27G.mcool:resolutions/1000000
+peakachu depth -p 4DNFI5IHU27G.mcool::resolutions/1000000
 ```
 
- 592991890
+ # of intra reads in your data: 592991890
+ # of intra reads in a human with matched sequencing coverage: 582003409
+ suggested model: 600 million
 
-According to the table, for ~600 million intra-reads, we recommend using the 30% models in your prediction.
+Based on the output above, we recommend using the 30% models (trained with ~600 million
+intra reads) in your prediction.
 
 ```bash
-peakachu score_genome -r 10000 --balance -p 4DNFI5IHU27G.mcool:resolutions/10000 -O 4DNFI5IHU27G-peakachu-10kb-scores.bedpe -m high-confidence.600million.10kb.pkl
+peakachu score_genome -r 10000 --balance -p 4DNFI5IHU27G.mcool:resolutions/10000 -O 4DNFI5IHU27G-peakachu-10kb-scores.bedpe -m high-confidence.600million.10kb.w6.pkl
 peakachu pool -r 10000 -i 4DNFI5IHU27G-peakachu-10kb-scores.bedpe -o 4DNFI5IHU27G-peakachu-10kb-loops.0.95.bedpe -t 0.95
 ```
 
