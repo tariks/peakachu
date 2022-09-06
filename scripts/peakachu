@@ -4,8 +4,7 @@ from peakachu import train_models,score_genome,score_chromosome,call_loops,calcu
 
 def getargs():
     ## Construct an ArgumentParser object for command-line arguments
-    parser = argparse.ArgumentParser(description='''Train Random Forest with Hi-C data and training peaklist.
-                                     ''',
+    parser = argparse.ArgumentParser(description='''Unveil Hi-C Anchors and Peaks.''',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     subparsers = parser.add_subparsers(dest='subcommands')
     subtrain = subparsers.add_parser('train',
