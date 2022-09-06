@@ -42,9 +42,9 @@ def main(args):
                 print('chrom', k, 'failed')
                 pass  # handle the inconsistency between .hic header and the matrix
 
-    print('# of intra reads in your data:', totals)
+    print('num of intra reads in your data:', totals)
     matched_read_num = 3031042417 / genome_size * totals
-    print('# of intra reads in a human with matched sequencing coverage:', int(matched_read_num))
+    print('num of intra reads in a human with matched sequencing coverage:', int(matched_read_num))
     print('suggested model:', match_pretrained_models(matched_read_num))
 
 def match_pretrained_models(v, platform='Hi-C'):

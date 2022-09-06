@@ -169,8 +169,8 @@ To make it clear, let's download another Hi-C dataset from 4DN: https://data.4dn
 peakachu depth -p 4DNFI5IHU27G.mcool::resolutions/1000000
 ```
 
- # of intra reads in your data: 592991890
- # of intra reads in a human with matched sequencing coverage: 582003409
+ num of intra reads in your data: 592991890
+ num of intra reads in a human with matched sequencing coverage: 582003409
  suggested model: 600 million
 
 Based on the output above, we recommend using the 30% models (trained with ~600 million
