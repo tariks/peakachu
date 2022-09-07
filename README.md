@@ -4,11 +4,11 @@
 
 Accurately predicting chromatin loops from genome-wide interaction matrices such as Hi-C data is critical to deepening our understanding of proper gene regulation. Current approaches are mainly focused on searching for statistically enriched dots on a genome-wide map. However, given the availability of orthogonal data types such as ChIA-PET, HiChIP, Capture Hi-C, and high-throughput imaging, a supervised learning approach could facilitate the discovery of a comprehensive set of chromatin interactions. Here, we present Peakachu, a Random Forest classification framework that predicts chromatin loops from genome-wide contact maps. We compare Peakachu with current enrichment-based approaches, and find that Peakachu identifies a unique set of short-range interactions. We show that our models perform well in different platforms, across different sequencing depths, and across different species. 
 
-## Citation
+# Citation
 
 Salameh, T.J., Wang, X., Song, F. et al. A supervised learning framework for chromatin loop detection in genome-wide contact maps. Nat Commun 11, 3428 (2020). https://doi.org/10.1038/s41467-020-17239-9
 
-## Installation
+# Installation
 
 Peakachu requires Python3 and several scientific packages to run. It is best to first set up the environment using conda and then install Peakachu from PyPI::
 
@@ -215,3 +215,10 @@ peakachu pool -r 10000 -i 4DNFI5IHU27G-peakachu-10kb-scores.bedpe -o 4DNFI5IHU27
 
 # Not just Hi-C
 Peakachu has been tested on Hi-C, Micrco-C, and DNA SPRITE contact maps with good results. For training sets, ChIA-PET, HiChIP, and PLAC-Seq have been tested. The purpose of this software is ultimately to facilitate the interpretation of results from multiple types of experiments, and the user is encouraged to apply Peakachu's training framework to newer approaches as they become available.
+
+# Release Notes
+### Version 2.0 (09/06/2022)
+1. Re-trained the models using the latest scikit-learn v1.1.2
+2. Used the distance-normalized signals instead of original contact signals
+3. Added a 2D Gaussian filter followed by min-max scaling to pre-process each training image
+4. Optimized the computation efficiency using numba and matrix operations.
