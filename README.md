@@ -10,7 +10,7 @@ Salameh, T.J., Wang, X., Song, F. et al. A supervised learning framework for chr
 
 # Installation
 
-Peakachu requires Python3 and several scientific packages to run. It is best to first set up the environment using conda and then install Peakachu from PyPI:
+Peakachu requires Python3 and several scientific packages to run. It is best to first set up the environment using conda and then install Peakachu from [PyPI](https://pypi.org/project/peakachu/):
 
 ```bash
 conda config --add channels defaults
