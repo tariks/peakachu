@@ -10,7 +10,7 @@ Salameh, T.J., Wang, X., Song, F. et al. A supervised learning framework for chr
 
 # Installation
 
-Peakachu requires Python3 and several scientific packages to run. It is best to first set up the environment using conda and then install Peakachu from PyPI::
+Peakachu requires Python3 and several scientific packages to run. It is best to first set up the environment using conda and then install Peakachu from PyPI:
 
 ```bash
 conda config --add channels defaults
@@ -209,7 +209,7 @@ Therefore, we recommend using the 30% models (trained with ~600 million intra re
 to predict loops on this data.
 
 ```bash
-peakachu score_genome -r 10000 --balance -p 4DNFI5IHU27G.mcool:resolutions/10000 -O 4DNFI5IHU27G-peakachu-10kb-scores.bedpe -m high-confidence.600million.10kb.w6.pkl
+peakachu score_genome -r 10000 --balance -p 4DNFI5IHU27G.mcool::resolutions/10000 -O 4DNFI5IHU27G-peakachu-10kb-scores.bedpe -m high-confidence.600million.10kb.w6.pkl
 peakachu pool -r 10000 -i 4DNFI5IHU27G-peakachu-10kb-scores.bedpe -o 4DNFI5IHU27G-peakachu-10kb-loops.0.95.bedpe -t 0.95
 ```
 
