@@ -16,7 +16,7 @@ Peakachu requires Python3 and several scientific packages to run. It is best to 
 conda config --add channels defaults
 conda config --add channels bioconda
 conda config --add channels conda-forge
-conda create -n peakachu cooler scikit-learn numba joblib=1.1.0
+conda create -n peakachu cooler numba scikit-learn=1.1.2 joblib=1.1.0
 conda activate peakachu
 pip install -U peakachu hic-straw==0.0.6 
 ```
