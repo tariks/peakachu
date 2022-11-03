@@ -54,7 +54,7 @@ The following example will download an example cooler file containing the GM1287
 Peakachu requires the contact map to be a .cool file or a .hic file and any training input to be a text file in bedpe format. Example training data can be found at the [training-sets](https://github.com/tariks/peakachu/tree/master/training-sets) subfolder. Cooler files may be found at the [4DN data portal](https://data.4dnucleome.org/).
 
 ```bash
-wget -O Rao2014-GM12878-MboI-allreps-filtered.10kb.cool -L https://dl.dropboxusercontent.com/s/9d3hqyy0ou0rwsz/Rao2014-GM12878-MboI-allreps-filtered.10kb.cool?dl=0
+wget http://3dgenome.fsm.northwestern.edu/peakachu/test_file/Rao2014-GM12878-MboI-allreps-filtered.10kb.cool
 ```
 
 ## Train a model and predict loops
@@ -192,25 +192,31 @@ from this table:
 | 10 million        |                                                                                                          |                                                                                                            | [0.5% 25kb](https://dl.dropboxusercontent.com/s/gsaxkgz0oh4ahgf/high-confidence.10million.25kb.pkl?dl=0)   |                                                                                         |                                                                                               |
 | 5 million         |                                                                                                          |                                                                                                            | [0.25% 25kb](https://dl.dropboxusercontent.com/s/10fbe85lpfabupw/high-confidence.5million.25kb.pkl?dl=0)   |                                                                                         |                                                                                               |
 
-To make it clear, let's download another Hi-C dataset from 4DN: https://data.4dnucleome.org/files-processed/4DNFI5IHU27G/@@download/4DNFI5IHU27G.mcool. Peakachu provides a handy function `peakachu depth` to extract the total number of intra-chromosomal pairs in your data and help you select the most appropriate pre-trained model:
+To make it clear, let's download another Hi-C dataset:
+
+```bash
+wget -O SKNAS-MboI-allReps-filtered.mcool -L https://www.dropbox.com/s/f80bgn11d7wfgq8/SKNAS-MboI-allReps-filtered.mcool?dl=0
+```
+
+Peakachu provides a handy function `peakachu depth` to extract the total number of intra-chromosomal pairs in your data and help you select the most appropriate pre-trained model:
 
 
 ```bash
-peakachu depth -p 4DNFI5IHU27G.mcool::resolutions/1000000
+peakachu depth -p SKNAS-MboI-allReps-filtered.mcool::resolutions/1000000
 ```
 
 The output of above command will be:
 
-    num of intra reads in your data: 592991890
-    num of intra reads in a human with matched sequencing coverage: 582003409
-    suggested model: 600 million
+    num of intra reads in your data: 141955751
+    num of intra reads in a human with matched sequencing coverage: 139325229
+    suggested model: 150 million
 
-Therefore, we recommend using the 30% models (trained with ~600 million intra reads)
+Therefore, we recommend using the 7.5% models (trained with ~150 million intra reads)
 to predict loops on this data.
 
 ```bash
-peakachu score_genome -r 10000 --balance -p 4DNFI5IHU27G.mcool::resolutions/10000 -O 4DNFI5IHU27G-peakachu-10kb-scores.bedpe -m high-confidence.600million.10kb.w6.pkl
-peakachu pool -r 10000 -i 4DNFI5IHU27G-peakachu-10kb-scores.bedpe -o 4DNFI5IHU27G-peakachu-10kb-loops.0.95.bedpe -t 0.95
+peakachu score_genome -r 10000 --balance -p SKNAS-MboI-allReps-filtered.mcool::resolutions/10000 -O SKNAS-peakachu-10kb-scores.bedpe -m high-confidence.150million.10kb.w6.pkl
+peakachu pool -r 10000 -i SKNAS-peakachu-10kb-scores.bedpe -o SKNAS-peakachu-10kb-loops.0.95.bedpe -t 0.95
 ```
 
 # Not just Hi-C
