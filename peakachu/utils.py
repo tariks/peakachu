@@ -7,6 +7,13 @@ from sklearn.isotonic import IsotonicRegression
 from scipy.sparse import csr_matrix
 from numba import njit
 
+def tocsr(X):
+
+    row, col, data = X.row, X.col, X.data
+    M = csr_matrix((data, (row, col)), shape=X.shape, dtype=float)
+
+    return M
+
 def csr_contact_matrix(norm, hicfile, chr1loc, chr2loc, unit,
                        binsize, is_synapse=False):
     '''
@@ -20,14 +27,14 @@ def csr_contact_matrix(norm, hicfile, chr1loc, chr2loc, unit,
     N = max(col) + 1
 
     # re-scale KR matrix to ICE-matrix range
-    M = csr_matrix((value, (row, col)), shape=(N, N))
+    M = csr_matrix((value, (row, col)), shape=(N, N), dtype=float)
     margs = np.array(M.sum(axis=0)).ravel() + \
         np.array(M.sum(axis=1)).ravel() - M.diagonal(0)
     margs[np.isnan(margs)] = 0
     scale = margs[margs != 0].mean()
     row, col = M.nonzero()
     value = M.data / scale
-    M = csr_matrix((value, (row, col)), shape=(N, N))
+    M = csr_matrix((value, (row, col)), shape=(N, N), dtype=float)
 
     return M
 
@@ -133,7 +140,7 @@ def calculate_expected(M, maxdis, raw=False):
     # extract valid columns
     if raw:
         R, C, data = R[valid_pixels], C[valid_pixels], M.data[valid_pixels]
-        M = csr_matrix((data, (R, C)), shape=M.shape)
+        M = csr_matrix((data, (R, C)), shape=M.shape, dtype=float)
         marg = np.array(M.sum(axis=0)).ravel()
         valid_cols = marg > 0
     else:

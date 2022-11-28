@@ -40,8 +40,9 @@ def main(args):
             chromname = 'chr'+key
         print('collecting from {}'.format(key))
         if not hic:
-            X = Lib.matrix(balance=args.balance,
-                           sparse=True).fetch(key).tocsr()
+            tmp = Lib.matrix(balance=args.balance,
+                            sparse=True).fetch(key)
+            X = utils.tocsr(tmp)
         else:
             if args.balance:
                 X = utils.csr_contact_matrix(

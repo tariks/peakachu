@@ -120,7 +120,7 @@ def learn_distri_kde(coords, res):
 def negative_generating(M, kde, positives, lower, long_start, long_end):
 
     positives = set(positives)
-    N = 3 * len(positives)
+    N = 4 * len(positives)
     # part 1: kde trained from positive input
     part1 = kde.resample(N).astype(int).ravel()
     part1 = part1[(part1 >= lower) & (part1 <= long_end)]
@@ -147,7 +147,7 @@ def negative_generating(M, kde, positives, lower, long_start, long_end):
         mask = tmp > 0
         R, C = R[mask], C[mask]
         pool = set(zip(R, C)) - positives
-        sub = random.sample(pool, n_d)
+        sub = random.sample(pool, min(n_d, len(pool)))
         neg_coords.extend(sub)
 
     random.shuffle(neg_coords)

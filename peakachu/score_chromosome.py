@@ -33,15 +33,15 @@ def main(args):
 
     if not hic:
         if args.balance:
-            M = Lib.matrix(balance=args.balance, sparse=True).fetch(ccname).tocsr()
-            raw_M = Lib.matrix(balance=False, sparse=True).fetch(ccname).tocsr()
+            M = utils.tocsr(Lib.matrix(balance=args.balance, sparse=True).fetch(ccname))
+            raw_M = utils.tocsr(Lib.matrix(balance=False, sparse=True).fetch(ccname))
             weights = Lib.bins().fetch(ccname)['weight'].values
             X = scoreUtils.Chromosome(M, model=model, raw_M=raw_M, weights=weights,
                                       cname=cikada, lower=args.lower,
                                       upper=args.upper, res=args.resolution,
                                       width=width)
         else:
-            M = Lib.matrix(balance=False, sparse=True).fetch(ccname).tocsr()
+            M = utils.tocsr(Lib.matrix(balance=False, sparse=True).fetch(ccname))
             X = scoreUtils.Chromosome(M, model=model, raw_M=M, weights=None,
                                       cname=cikada, lower=args.lower,
                                       upper=args.upper, res=args.resolution,
