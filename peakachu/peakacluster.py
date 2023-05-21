@@ -18,7 +18,7 @@ def parse_peakachu(fil, thre, res):
     
     results = {}
     for c in D:
-        tmp = local_clustering(D[c], res, min_count=3, r=15000)
+        tmp = local_clustering(D[c], min_count=3, r=2)
         intermediate = []
         for i in tmp:
             if i[0] in D[c]:
@@ -53,13 +53,7 @@ def second_run(sort_list):
     
     return final_list
 
-def find_anchors(pos, min_count=3, min_dis=15000, wlen=40000, res=10000):
-
-    min_dis = max(min_dis//res, 2)
-    if res <= 10000:
-       wlen = min(wlen//res, 20)
-    else:
-        wlen = 4
+def find_anchors(pos, min_count=3, min_dis=2, wlen=4):
 
     count = Counter(pos)
     refidx = range(min(count), max(count)+1)
@@ -137,7 +131,7 @@ def _cluster_core(sort_list, r, visited, final_list):
         
         visited.update(pool)
 
-def local_clustering(Donuts, res, min_count=3, r=15000):
+def local_clustering(Donuts, min_count=3, r=2):
 
     final_list = []
     x = np.r_[[i[0] for i in Donuts]]
@@ -145,9 +139,8 @@ def local_clustering(Donuts, res, min_count=3, r=15000):
     if x.size == 0:
         return final_list
 
-    x_anchors = find_anchors(x, min_count=min_count, min_dis=r, res=res)
-    y_anchors = find_anchors(y, min_count=min_count, min_dis=r, res=res)
-    r = max(r//res, 2)
+    x_anchors = find_anchors(x, min_count=min_count, min_dis=r)
+    y_anchors = find_anchors(y, min_count=min_count, min_dis=r)
     visited = set()
     lookup = set(zip(x, y))
     for x_a in x_anchors:

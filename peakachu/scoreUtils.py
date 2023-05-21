@@ -113,20 +113,14 @@ class Chromosome():
                 prob_pool = np.r_[prob_pool, p[pfilter]]
         ri = ri.astype(int)
         ci = ci.astype(int)
-        '''
-        # finely tune the probability score by combining the Fold-enrichment score
-        prob_tuned = []
-        for i in range(ri.size):
-            fc = fc_pool[i]
-            # change 0.1 and 0.9 if more weithts need to be given to FC
-            fc_factor = (1 / (1 + np.exp(-fc)) - 0.5) / 0.5 * 0.1 + 0.9
-            p = prob_pool[i] * fc_factor
-            prob_tuned.append(p)
-        prob_pool = np.r_[prob_tuned]
-        '''
+        
+        
         result = sparse.csr_matrix((prob_pool, (ri, ci)), shape=self.M.shape)
-        data = np.array(self.M[ri, ci]).ravel()
-        self.M = sparse.csr_matrix((data, (ri, ci)), shape=self.M.shape)
+        if ri.size > 0:
+            data = np.array(self.M[ri, ci]).ravel()
+            self.M = sparse.csr_matrix((data, (ri, ci)), shape=self.M.shape)
+        else:
+            self.M = result
 
         return result, self.M
 
