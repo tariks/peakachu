@@ -367,8 +367,11 @@ If you want to predict loops on SMC1A HiChIP/PLAC-Seq contact matrices, please s
 | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/SMC1A-HiChIP-models/SMC1A-HiChIP-peakachu-pretrained.10million.2kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/SMC1A-HiChIP-models/SMC1A-HiChIP-peakachu-pretrained.10million.5kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/SMC1A-HiChIP-models/SMC1A-HiChIP-peakachu-pretrained.10million.10kb.pkl)   |
 
 
-
 # Release Notes
+### Version 2.2 (05/21/2023)
+1. made changes to make sure the behavior of the local clustering algorithm the same at different resolutions.
+2. fixed a bug when the input contact matrix is extremely sparse
+
 ### Version 2.1 (11/28/2022)
 1. Fixed a bug regarding model training using the raw contact values 
 
