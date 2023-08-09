@@ -13,6 +13,12 @@ def main(args):
 
     model = joblib.load(args.model)
 
+    # decide which normalization method to use
+    if args.clr_weight_name.lower() == 'raw':
+        correct = False
+    else:
+        correct = args.clr_weight_name
+
     # deduce the width parameter used during the training
     width = int((np.sqrt(model.feature_importances_.size) - 1) / 2)
 
@@ -45,10 +51,10 @@ def main(args):
             cname = 'chr'+key
             
         if not hic:
-            if args.balance:
-                M = utils.tocsr(Lib.matrix(balance=args.balance, sparse=True).fetch(key))
+            if correct:
+                M = utils.tocsr(Lib.matrix(balance=correct, sparse=True).fetch(key))
                 raw_M = utils.tocsr(Lib.matrix(balance=False, sparse=True).fetch(key))
-                weights = Lib.bins().fetch(key)['weight'].values
+                weights = Lib.bins().fetch(key)[correct].values
                 X = scoreUtils.Chromosome(M, model=model, raw_M=raw_M, weights=weights,
                                           cname=cname, lower=args.lower,
                                           upper=args.upper, res=args.resolution,
@@ -60,7 +66,7 @@ def main(args):
                                           upper=args.upper, res=args.resolution,
                                           width=width)
         else:
-            if args.balance:
+            if correct:
                 M = utils.csr_contact_matrix('KR', args.path, key, key, 'BP', args.resolution)
                 raw_M = utils.csr_contact_matrix('NONE', args.path, key, key, 'BP', args.resolution)
                 X = scoreUtils.Chromosome(M, model=model, raw_M=raw_M, weights=None,

@@ -31,10 +31,12 @@ def getargs():
                          type = int, default=10000)
     for i in subs[:-1]:
         i.add_argument('-p', '--path',
-                         help = 'Path to a .cool URI string or a .hic file.')
+                         help = 'Path to a .cool URI string')
 
     for i in subs[1:-1]:
-        i.add_argument('--balance',action='store_true', help='''Whether or not using the ICE/KR-balanced matrix.''')
+        i.add_argument('--clr-weight-name', default='weight',
+                       help='''The name of the weight column in your Cooler URI for normalizing
+                       the contact signals. Specify it to "raw" if you want to use the raw signals.''')
 
     subchrom.add_argument('-C', '--chrom', help='''Chromosome label. Only contact data within the
                           specified chromosome will be considered.''')

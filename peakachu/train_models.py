@@ -12,6 +12,12 @@ def main(args):
 
     pathlib.Path(args.output).mkdir(parents=True, exist_ok=True)
 
+    # decide which normalization method to use
+    if args.clr_weight_name.lower() == 'raw':
+        correct = False
+    else:
+        correct = args.clr_weight_name
+
     # more robust to check if a file is .hic
     hic_info = utils.read_hic_header(args.path)
 
@@ -40,11 +46,10 @@ def main(args):
             chromname = 'chr'+key
         print('collecting from {}'.format(key))
         if not hic:
-            tmp = Lib.matrix(balance=args.balance,
-                            sparse=True).fetch(key)
+            tmp = Lib.matrix(balance=correct, sparse=True).fetch(key)
             X = utils.tocsr(tmp)
         else:
-            if args.balance:
+            if correct:
                 X = utils.csr_contact_matrix(
                     'KR', args.path, key, key, 'BP', res)
             else:

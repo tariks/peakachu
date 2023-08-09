@@ -18,7 +18,7 @@ conda config --add channels bioconda
 conda config --add channels conda-forge
 mamba create -n peakachu cooler numba scikit-learn=1.1.2 joblib=1.1.0
 mamba activate peakachu
-pip install -U peakachu hic-straw==0.0.6 
+pip install -U peakachu
 ```
 
 Peakachu should now be installed as a command-line tool within the new environment. Options for all peakachu commands and sub-commands can be accessed with the -h option. 
