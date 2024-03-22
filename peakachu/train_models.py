@@ -4,7 +4,6 @@ def main(args):
 
     import gc, os, joblib
     import pathlib
-    import straw
     import numpy as np
     from peakachu import trainUtils, utils
 

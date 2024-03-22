@@ -1,7 +1,7 @@
 
 # Read information from the hic header
 
-import struct, io, os, straw
+import struct, io, os
 import numpy as np
 from sklearn.isotonic import IsotonicRegression
 from scipy.sparse import csr_matrix
@@ -19,6 +19,8 @@ def csr_contact_matrix(norm, hicfile, chr1loc, chr2loc, unit,
     '''
     Extract the contact matrix from .hic in CSR sparse format
     '''
+    import straw
+
     tri_list = straw.straw(norm, hicfile, chr1loc,
                            chr2loc, unit, binsize, is_synapse)
     row = [r//binsize for r in tri_list[0]]
@@ -40,6 +42,8 @@ def csr_contact_matrix(norm, hicfile, chr1loc, chr2loc, unit,
 
 def get_hic_chromosomes(hicfile, res):
 
+    import straw
+    
     hic_info = read_hic_header(hicfile)
     chromosomes = []
     # handle with inconsistency between .hic header and matrix data
