@@ -94,8 +94,10 @@ def main(args):
         else:
             chromname = 'chr'+key
         
-        if chromname != 'chrY':
+        '''
+        if chromname != 'chr2':
             continue
+        '''
 
         trainset = []
         labels_ = np.r_[[]]

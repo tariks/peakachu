@@ -37,8 +37,8 @@ peakachu -h
         train               Train RandomForest model per chromosome
         score_chromosome    Calculate interaction probability per pixel for a chromosome
         score_genome        Calculate interaction probability per pixel for the whole genome
-        depth               Calculate the total number of intra-chromosomal chromatin contacts and select the most appropriate pre-trained model
-                            for you.
+        depth               Calculate the total number of intra-chromosomal chromatin contacts and select the
+                            most appropriate pre-trained model for you.
         pool                Print centroid loci from score_genome/score_chromosome output
 
     options:
@@ -65,24 +65,28 @@ It is always a good idea to call the help function immediately before entering a
 peakachu train -h
 ```
 
-    usage: peakachu train [-h] [-r RESOLUTION] [-p PATH] [--balance] [-b BEDPE] [-w WIDTH] [--nproc NPROC] [-O OUTPUT]
+    usage: peakachu train [-h] [-r RESOLUTION] [-p PATH] [--clr-weight-name CLR_WEIGHT_NAME] [-b BEDPE]
+                      [-w WIDTH] [--nproc NPROC] [-O OUTPUT]
 
     options:
       -h, --help            show this help message and exit
       -r RESOLUTION, --resolution RESOLUTION
                             Resolution in bp (default 10000)
-      -p PATH, --path PATH  Path to a .cool URI string or a .hic file.
-      --balance             Whether or not using the ICE/KR-balanced matrix.
+      -p PATH, --path PATH  Path to a .cool URI string
+      --clr-weight-name CLR_WEIGHT_NAME
+                            The name of the weight column in your Cooler URI for normalizing the contact
+                            signals. Specify it to "raw" if you want to use the raw signals.
       -b BEDPE, --bedpe BEDPE
                             Path to the bedpe file containing positive training set.
       -w WIDTH, --width WIDTH
-                            Number of bins added to center of window. default width=5 corresponds to 11x11 windows
+                            Number of bins added to center of window. default width=5 corresponds to 11x11
+                            windows
       --nproc NPROC         Number of worker processes that will be allocated for training. (default 4)
       -O OUTPUT, --output OUTPUT
                             Folder path to store trained models.
 
 ```bash
-peakachu train -r 10000 -p Rao2014-GM12878-MboI-allreps-filtered.10kb.cool --balance -O models -b gm12878.mumbach.h3k27ac-hichip.hg19.bedpe
+peakachu train -r 10000 -p Rao2014-GM12878-MboI-allreps-filtered.10kb.cool --clr-weight-name weight -O models -b gm12878.mumbach.h3k27ac-hichip.hg19.bedpe
 ```
 
 This will train 23 random forest models, each labeled by a chromosome. The model for every chromosome
@@ -93,17 +97,21 @@ was trained using interactions from all the other 22 chromosomes in the provided
 peakachu score_chromosome -h
 ```
 
-    usage: peakachu score_chromosome [-h] [-r RESOLUTION] [-p PATH] [--balance] [-C CHROM] [-m MODEL] [-l LOWER] [-u UPPER]
-                                 [--minimum-prob MINIMUM_PROB] [-O OUTPUT]
+    usage: peakachu score_chromosome [-h] [-r RESOLUTION] [-p PATH] [--clr-weight-name CLR_WEIGHT_NAME]
+                                 [-C CHROM] [-m MODEL] [-l LOWER] [-u UPPER] [--minimum-prob MINIMUM_PROB]
+                                 [-O OUTPUT]
 
     options:
       -h, --help            show this help message and exit
       -r RESOLUTION, --resolution RESOLUTION
                             Resolution in bp (default 10000)
-      -p PATH, --path PATH  Path to a .cool URI string or a .hic file.
-      --balance             Whether or not using the ICE/KR-balanced matrix.
+      -p PATH, --path PATH  Path to a .cool URI string
+      --clr-weight-name CLR_WEIGHT_NAME
+                            The name of the weight column in your Cooler URI for normalizing the contact
+                            signals. Specify it to "raw" if you want to use the raw signals.
       -C CHROM, --chrom CHROM
-                            Chromosome label. Only contact data within the specified chromosome will be considered.
+                            Chromosome label. Only contact data within the specified chromosome will be
+                            considered.
       -m MODEL, --model MODEL
                             Path to pickled model file.
       -l LOWER, --lower LOWER
@@ -116,8 +124,8 @@ peakachu score_chromosome -h
                             Output file name.
 
 ```bash
-peakachu score_chromosome -r 10000 -p Rao2014-GM12878-MboI-allreps-filtered.10kb.cool --balance -O GM12878-chr2-scores.bedpe -C chr2 -m models/chr2.pkl 
-peakachu pool -r 10000 -i GM12878-chr2-scores.bedpe -o GM12878-chr2-loops.bedpe -t .9
+peakachu score_chromosome -r 10000 -p Rao2014-GM12878-MboI-allreps-filtered.10kb.cool --clr-weight-name weight -O GM12878-chr2-scores.bedpe -C chr2 -m models/chr2.pkl 
+peakachu pool -r 10000 -i GM12878-chr2-scores.bedpe -o GM12878-chr2-loops.bedpe -t 0.9
 ```
 
 The pool function serves to select the most significant non-redundant results from per-pixel probabilities calculated by the score functions. It is recommended to try different probability thresholds to achieve the best sensitivity-specificity tradeoff. The output is a standard bedpe file with the 7th and the final column containing the predicted probability from the random forest model and the interaction frequency extracted from the contact matrix, respectively, to support further filtering. The results can be visualized in [juicebox](https://github.com/aidenlab/Juicebox) or [higlass](https://docs.higlass.io) by loading as 2D annotations. Here is an example screenshot of predicted GM12878 loops in juicer:
@@ -199,14 +207,14 @@ Therefore, we recommend using the 7.5% models (trained with ~150 million intra r
 to predict loops on this data.
 
 ```bash
-peakachu score_genome -r 10000 --balance -p SKNAS-MboI-allReps-filtered.mcool::resolutions/10000 -O SKNAS-peakachu-10kb-scores.bedpe -m high-confidence.150million.10kb.w6.pkl
+peakachu score_genome -r 10000 --clr-weight-name weight -p SKNAS-MboI-allReps-filtered.mcool::resolutions/10000 -O SKNAS-peakachu-10kb-scores.bedpe -m high-confidence.150million.10kb.w6.pkl
 peakachu pool -r 10000 -i SKNAS-peakachu-10kb-scores.bedpe -o SKNAS-peakachu-10kb-loops.0.95.bedpe -t 0.95
 ```
 
 # Not just Hi-C
 In addition to Hi-C, Peakachu has also been trained on other 3D genomic platforms with good results, including Micrco-C ([Krietenstein et al. 2020](https://pubmed.ncbi.nlm.nih.gov/32213324/)), DNA SPRITE ([Quinodoz et al. 2018](https://pubmed.ncbi.nlm.nih.gov/29887377/)), ChIA-PET ([Fullwood et al. 2009](https://pubmed.ncbi.nlm.nih.gov/19890323/)), HiChIP ([Mumbach et al. 2016](https://pubmed.ncbi.nlm.nih.gov/27643841/)), TrAC-loop ([Lai et al. 2018](https://pubmed.ncbi.nlm.nih.gov/30150754/)), and HiCAR ([Wei et al. 2022](https://pubmed.ncbi.nlm.nih.gov/35196517/)), etc.
 
-If you want to predict loops on HiCAR contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and a series of downsampled versions of a HiCAR dataset in H1ESC cells. As these models were trained using the raw contact values (rather than the ICE-normalized contact values as we did for Hi-C), please **do not** specify "--balance" when you run "peakachu score_genome" or "peakachu score_chromosome".
+If you want to predict loops on HiCAR contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and a series of downsampled versions of a HiCAR dataset in H1ESC cells. As these models were trained using the raw contact values (rather than the ICE-normalized contact values as we did for Hi-C), please set the parameter "--clr-weight-name" to "raw" when you run "peakachu score_genome" or "peakachu score_chromosome".
 
 | 2kb models                                                                                                               | 5kb models                                                                                                               | 10kb models                                                                                                               |
 |--------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
@@ -229,7 +237,7 @@ If you want to predict loops on HiCAR contact matrices, please select a model fr
 | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/HiCAR-models/HiCAR-peakachu-pretrained.20million.2kb.pkl)   | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/HiCAR-models/HiCAR-peakachu-pretrained.20million.5kb.pkl)   | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/HiCAR-models/HiCAR-peakachu-pretrained.20million.10kb.pkl)   |
 | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/HiCAR-models/HiCAR-peakachu-pretrained.10million.2kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/HiCAR-models/HiCAR-peakachu-pretrained.10million.5kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/HiCAR-models/HiCAR-peakachu-pretrained.10million.10kb.pkl)   |
 
-If you want to predict loops on TrAC-loop contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and a series of downsampled versions of a TrAC-loop dataset in H1ESC cells. Again, **do not** specify "--balance" when you run "peakachu score_genome" or "peakachu score_chromosome".
+If you want to predict loops on TrAC-loop contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and a series of downsampled versions of a TrAC-loop dataset in H1ESC cells. Again, please set the parameter "--clr-weight-name" to "raw" when you run "peakachu score_genome" or "peakachu score_chromosome".
 
 | 2kb models                                                                                                             | 5kb models                                                                                                             | 10kb models                                                                                                             |
 |------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
@@ -246,7 +254,7 @@ If you want to predict loops on TrAC-loop contact matrices, please select a mode
 | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/TrAC-models/TrAC-peakachu-pretrained.20million.2kb.pkl)   | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/TrAC-models/TrAC-peakachu-pretrained.20million.5kb.pkl)   | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/TrAC-models/TrAC-peakachu-pretrained.20million.10kb.pkl)   |
 | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/TrAC-models/TrAC-peakachu-pretrained.10million.2kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/TrAC-models/TrAC-peakachu-pretrained.10million.5kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/TrAC-models/TrAC-peakachu-pretrained.10million.10kb.pkl)   |
 
-If you want to predict chromatin loops on CTCF ChIA-PET contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and downsampled versions of a CTCF ChIA-PET dataset in H1ESC cells. **Do not** specify "--balance" when you run "peakachu score_genome" or "peakachu score_chromosome".
+If you want to predict chromatin loops on CTCF ChIA-PET contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and downsampled versions of a CTCF ChIA-PET dataset in H1ESC cells. Please set the parameter "--clr-weight-name" to "raw" when you run "peakachu score_genome" or "peakachu score_chromosome".
 
 | 2kb models                                                                                                                             | 5kb models                                                                                                                             | 10kb models                                                                                                                             |
 |----------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
@@ -268,7 +276,7 @@ If you want to predict chromatin loops on CTCF ChIA-PET contact matrices, please
 | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/CTCF-ChIAPET-models/CTCF-ChIAPET-peakachu-pretrained.20million.2kb.pkl)   | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/CTCF-ChIAPET-models/CTCF-ChIAPET-peakachu-pretrained.20million.5kb.pkl)   | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/CTCF-ChIAPET-models/CTCF-ChIAPET-peakachu-pretrained.20million.10kb.pkl)   |
 | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/CTCF-ChIAPET-models/CTCF-ChIAPET-peakachu-pretrained.10million.2kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/CTCF-ChIAPET-models/CTCF-ChIAPET-peakachu-pretrained.10million.5kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/CTCF-ChIAPET-models/CTCF-ChIAPET-peakachu-pretrained.10million.10kb.pkl)   |
 
-If you want to predict loops on Pol2 (RNA Polymerase II) ChIA-PET contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and downsampled versions of a Pol2 ChIA-PET dataset in WTC11 cells. **Do not** specify "--balance" when you run "peakachu score_genome" or "peakachu score_chromosome".
+If you want to predict loops on Pol2 (RNA Polymerase II) ChIA-PET contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and downsampled versions of a Pol2 ChIA-PET dataset in WTC11 cells. Please set the parameter "--clr-weight-name" to "raw" when you run "peakachu score_genome" or "peakachu score_chromosome".
 
 | 2kb models                                                                                                                             | 5kb models                                                                                                                             | 10kb models                                                                                                                             |
 |----------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
@@ -287,7 +295,7 @@ If you want to predict loops on Pol2 (RNA Polymerase II) ChIA-PET contact matric
 | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/Pol2-ChIAPET-models/Pol2-ChIAPET-peakachu-pretrained.20million.2kb.pkl)   | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/Pol2-ChIAPET-models/Pol2-ChIAPET-peakachu-pretrained.20million.5kb.pkl)   | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/Pol2-ChIAPET-models/Pol2-ChIAPET-peakachu-pretrained.20million.10kb.pkl)   |
 | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/Pol2-ChIAPET-models/Pol2-ChIAPET-peakachu-pretrained.10million.2kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/Pol2-ChIAPET-models/Pol2-ChIAPET-peakachu-pretrained.10million.5kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/Pol2-ChIAPET-models/Pol2-ChIAPET-peakachu-pretrained.10million.10kb.pkl)   |
 
-If you want to predict loops on H3K27ac HiChIP/PLAC-Seq contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and downsampled versions of a H3K27ac HiChIP dataset in GM12878 cells.  **Do not** specify "--balance" when you run "peakachu score_genome" or "peakachu score_chromosome".
+If you want to predict loops on H3K27ac HiChIP/PLAC-Seq contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and downsampled versions of a H3K27ac HiChIP dataset in GM12878 cells. Please set the parameter "--clr-weight-name" to "raw" when you run "peakachu score_genome" or "peakachu score_chromosome".
 
 | 2kb models                                                                                                                                 | 5kb models                                                                                                                                 | 10kb models                                                                                                                                 |
 |--------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
@@ -309,7 +317,7 @@ If you want to predict loops on H3K27ac HiChIP/PLAC-Seq contact matrices, please
 | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/H3K27ac-HiChIP-models/H3K27ac-HiChIP-peakachu-pretrained.20million.2kb.pkl)   | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/H3K27ac-HiChIP-models/H3K27ac-HiChIP-peakachu-pretrained.20million.5kb.pkl)   | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/H3K27ac-HiChIP-models/H3K27ac-HiChIP-peakachu-pretrained.20million.10kb.pkl)   |
 | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/H3K27ac-HiChIP-models/H3K27ac-HiChIP-peakachu-pretrained.10million.2kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/H3K27ac-HiChIP-models/H3K27ac-HiChIP-peakachu-pretrained.10million.5kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/H3K27ac-HiChIP-models/H3K27ac-HiChIP-peakachu-pretrained.10million.10kb.pkl)   |
 
-If you want to predict loops on H3K4me3 HiChIP/PLAC-Seq contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and downsampled versions of a H3K4me3 PLAC-Seq dataset in GM12878 cells. **Do not** specify "--balance" when you run "peakachu score_genome" or "peakachu score_chromosome".
+If you want to predict loops on H3K4me3 HiChIP/PLAC-Seq contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and downsampled versions of a H3K4me3 PLAC-Seq dataset in GM12878 cells. Please set the parameter "--clr-weight-name" to "raw" when you run "peakachu score_genome" or "peakachu score_chromosome".
 
 | 2kb models                                                                                                                             | 5kb models                                                                                                                             | 10kb models                                                                                                                             |
 |----------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
@@ -327,7 +335,7 @@ If you want to predict loops on H3K4me3 HiChIP/PLAC-Seq contact matrices, please
 | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/H3K4me3-PLAC-models/H3K4me3-PLAC-peakachu-pretrained.20million.2kb.pkl)   | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/H3K4me3-PLAC-models/H3K4me3-PLAC-peakachu-pretrained.20million.5kb.pkl)   | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/H3K4me3-PLAC-models/H3K4me3-PLAC-peakachu-pretrained.20million.10kb.pkl)   |
 | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/H3K4me3-PLAC-models/H3K4me3-PLAC-peakachu-pretrained.10million.2kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/H3K4me3-PLAC-models/H3K4me3-PLAC-peakachu-pretrained.10million.5kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/H3K4me3-PLAC-models/H3K4me3-PLAC-peakachu-pretrained.10million.10kb.pkl)   |
 
-If you want to predict loops on CTCF HiChIP/PLAC-Seq contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and downsampled versions of a CTCF HiChIP dataset in GM12878 cells. **Do not** specify "--balance" when you run "peakachu score_genome" or "peakachu score_chromosome".
+If you want to predict loops on CTCF HiChIP/PLAC-Seq contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and downsampled versions of a CTCF HiChIP dataset in GM12878 cells. Please set the parameter "--clr-weight-name" to "raw" when you run "peakachu score_genome" or "peakachu score_chromosome".
 
 | 2kb models                                                                                                                           | 5kb models                                                                                                                           | 10kb models                                                                                                                           |
 |--------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
@@ -346,7 +354,7 @@ If you want to predict loops on CTCF HiChIP/PLAC-Seq contact matrices, please se
 | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/CTCF-HiChIP-models/CTCF-HiChIP-peakachu-pretrained.20million.2kb.pkl)   | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/CTCF-HiChIP-models/CTCF-HiChIP-peakachu-pretrained.20million.5kb.pkl)   | [20   million](http://3dgenome.fsm.northwestern.edu/peakachu/CTCF-HiChIP-models/CTCF-HiChIP-peakachu-pretrained.20million.10kb.pkl)   |
 | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/CTCF-HiChIP-models/CTCF-HiChIP-peakachu-pretrained.10million.2kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/CTCF-HiChIP-models/CTCF-HiChIP-peakachu-pretrained.10million.5kb.pkl)   | [10   million](http://3dgenome.fsm.northwestern.edu/peakachu/CTCF-HiChIP-models/CTCF-HiChIP-peakachu-pretrained.10million.10kb.pkl)   |
 
-If you want to predict loops on SMC1A HiChIP/PLAC-Seq contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and downsampled versions of a SMC1A HiChIP dataset in GM12878 cells. **Do not** specify "--balance" when you run "peakachu score_genome" or "peakachu score_chromosome".
+If you want to predict loops on SMC1A HiChIP/PLAC-Seq contact matrices, please select a model from the following table. The models were trained with a high-confidence loop set and downsampled versions of a SMC1A HiChIP dataset in GM12878 cells. Please set the parameter "--clr-weight-name" to "raw" when you run "peakachu score_genome" or "peakachu score_chromosome".
 
 | 2kb models                                                                                                                             | 5kb models                                                                                                                             | 10kb models                                                                                                                             |
 |----------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
